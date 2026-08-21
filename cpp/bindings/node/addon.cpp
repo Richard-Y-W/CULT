@@ -1,6 +1,7 @@
 #include <node_api.h>
 
 #include <cstddef>
+#include <cstdint>
 #include <stdexcept>
 #include <string>
 #include <vector>
