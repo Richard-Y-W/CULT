@@ -85,3 +85,8 @@
 - The privacy-safe live smoke parsed a current public Bluesky reply and retained neither text nor actor identifier. This connectivity check did not persist a production collection.
 - Measured dense rolling-pair benchmarks covered 30, 100, and 1,000 synthetic expressions. Exact timings and caveats are recorded in `docs/performance/README.md`; no memory/allocation result is invented.
 - Docker CLI was available but the Docker server daemon was not running. PostgreSQL migration `003_phase3_research_engine.sql`, calibration, and close commands were therefore not executed locally and are left to PostgreSQL CI verification.
+
+## 2026-08-21 — Phase 3 CI correction
+
+- GitHub's PostgreSQL 16 TypeScript job passed migration 003, seed, lint, typecheck, 44 tests, and production build. ASan/UBSan and hostile-Unicode jobs passed.
+- Clang 18 correctly rejected an implicit unsigned iterator offset conversion in expected-shortfall calculation under `-Wsign-conversion -Werror`. Reproduced it in WSL, replaced it with an explicit `std::ptrdiff_t` boundary, then rebuilt and passed both C++ suites under Clang 18 and local GCC.

@@ -111,7 +111,8 @@ Result run(std::span<const TimestampMs> timestamps, std::span<const double> pric
     const auto cutoff = std::min(sorted_returns.size() - 1,
       static_cast<std::size_t>(std::floor(0.05 * static_cast<double>(sorted_returns.size()))));
     result.value_at_risk_95 = -sorted_returns[cutoff];
-    result.expected_shortfall_95 = -std::accumulate(sorted_returns.begin(), sorted_returns.begin() + cutoff + 1, 0.0) /
+    const auto tail_end = sorted_returns.begin() + static_cast<std::ptrdiff_t>(cutoff + 1);
+    result.expected_shortfall_95 = -std::accumulate(sorted_returns.begin(), tail_end, 0.0) /
       static_cast<double>(cutoff + 1);
   }
   double peak = result.equity_curve.front();
