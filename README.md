@@ -1,0 +1,3 @@
+# CULT
+
+Initial project setup.
