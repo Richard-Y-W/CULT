@@ -27,6 +27,26 @@ const registryData = JSON.parse(
     lagP99Ms: null,
   };
 describe("Bluesky aggregate-first ingestion", () => {
+  it("maps authorized like/repost/reply records to transient expression cascades", () => {
+    const parser = new BlueskyEventParser(new EmojiRegistry(registryData)),
+      engagement = readFileSync(
+        "data/fixtures/bluesky-engagement.jsonl",
+        "utf8",
+      )
+        .trim()
+        .split(/\r?\n/)
+        .flatMap((line) => parser.parse(line).behaviorEvents);
+    expect(engagement.map((event) => event.type)).toEqual([
+      "CREATE",
+      "LIKE",
+      "REPOST",
+      "CREATE",
+      "REPLY",
+      "DELETE",
+    ]);
+    expect(engagement[1]?.expressionIds).toContain("expr_crying_face");
+    expect(engagement[4]?.expressionIds).toContain("expr_crying_face");
+  });
   it("classifies original, reply, quote and pure repost eligibility", () => {
     const parser = new BlueskyEventParser(new EmojiRegistry(registryData));
     expect(parser.parse(lines[0]!).document?.bucket).toBe("ORIGINAL");

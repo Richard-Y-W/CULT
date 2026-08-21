@@ -1,5 +1,18 @@
 # Build log
 
+## 2026-08-21 — Phase 4 expression-event and exchange laboratory
+
+- Audited and froze the Phase 3 baseline at `21f65fd`; 44 TypeScript tests, lint, typecheck, build, GCC C++ 2/2 tests, 25 parity metrics, synthetic generation, worker fixture, and corrected-path aggregate replay passed. Docker/PostgreSQL remained unavailable locally.
+- Added separate expression, signal, and market event contracts with nanosecond logical time, multi-expression attribution, incremental engagement components, privacy-safe cascades, decayed amplification, propagation, breadth/concentration, inter-arrival/Fano/burstiness diagnostics, and experimental data-liquidity tiers.
+- Extended the Bluesky live-shadow adapter to authorized post/like/repost collections. Strong-reference linkage is transient and emits only opaque HMAC record/cascade IDs; handles, DIDs, AT URIs, post text, and profiles are not persisted.
+- Added the modular native `cult_tape`, `cult_behavior`, and `cult_exchange` paths: deterministic scheduler; integer L3 price-time book; price-time priority; partial fills; exact queue position; limit/market, IOC/FOK/post-only, cancel/replace; STP; L1/L2/L3; state snapshot/restore; microprice, imbalance, OFI, trade imbalance, markout/effective spread; latency distributions; pre-trade risk; kill/halt and reopening-price primitives.
+- Added a trusted local `HftStrategy` boundary, simple inventory-skew market maker, reference-arbitrage response, TWAP/VWAP-like schedules, execution quality, and deterministic market-making challenge harness. No arbitrary uploaded code is executed.
+- Added Great Cry, Celebrity, and spam-like synthetic event-to-market scenarios, SHA-256 replay artifacts, a generated comparison report, native CLI, 50,000-operation randomized book property test, and Quant monitor/tape/depth/flow/cascade/risk/heatmap API contracts without redesigning the frontend.
+- Added migration `004_phase4_event_exchange.sql`, simulation provenance/run schemas, JSON-to-Parquet tape exporter, three ADRs, Phase 4 architecture/methodology/research/Quant docs, expanded signal/data/finance dictionaries, and explicit live-market gates.
+- Measured the Release GCC 13.2 in-memory native benchmark at one million cycles: 2.52M insert/cancel, 3.09M replace, 2.18M match cycles per second; exact scope/caveats are in `docs/performance/README.md`.
+- Known limitations: no durable live-shadow validation, PostgreSQL Phase 4 repositories are not fully activated, no production WebSocket transport, compact demos do not generate complete markout curves, and full simulator/agent checkpoint serialization remains future work.
+- Next recommended step: feature freeze and frontend Phase 4.5 after final CI verification; then run a 72-hour-to-seven-day shadow campaign before considering any live-market activation.
+
 ## 2026-08-21 — Foundation and domain architecture
 
 - Implemented npm workspace topology, strict TypeScript references, Docker PostgreSQL, environment template, and command surface.
@@ -90,3 +103,14 @@
 
 - GitHub's PostgreSQL 16 TypeScript job passed migration 003, seed, lint, typecheck, 44 tests, and production build. ASan/UBSan and hostile-Unicode jobs passed.
 - Clang 18 correctly rejected an implicit unsigned iterator offset conversion in expected-shortfall calculation under `-Wsign-conversion -Werror`. Reproduced it in WSL, replaced it with an explicit `std::ptrdiff_t` boundary, then rebuilt and passed both C++ suites under Clang 18 and local GCC.
+
+## 2026-08-21 — Phase 4 final local verification
+
+- `npm test` passed 51 tests across 10 files. `npm run lint`, `npm run typecheck`, `npm run build`, and the 25-metric TypeScript/C++ differential suite passed. The production web artifact remained 209.96 kB JavaScript (65.56 kB gzip); Phase 4 did not redesign the frontend.
+- Clang 18 Release and GCC 13.3 with AddressSanitizer/UndefinedBehaviorSanitizer each built every native target and passed all three CTest programs. These include the quantitative suite, hostile-Unicode property suite, and 50,000-operation randomized order-book invariant suite.
+- The live application smoke passed health, BUY, SHORT, portfolio, backtest, and browser checks. Quant market monitor, CRY tape, and heatmap endpoints returned HTTP 200. The local processes were stopped after verification.
+- The Great Cry replay reconstructed 160 expression events, three signal events, and 23 market events with deterministic SHA-256 output `46c328627c5369504e66ee30b765825ad4fc28cec95becff32909e962efdb49b`.
+- The Parquet export smoke wrote five versioned tables and a manifest under the ignored build directory. The optional public Bluesky connectivity smoke parsed a current reply while retaining neither source text nor actor identity.
+- Docker Desktop's server daemon was not running, so migration 004 was not executed against local PostgreSQL. CI remains responsible for the PostgreSQL 16 migration check; this local run does not claim it passed.
+- ESLint was updated to ignore all generated CMake `build` trees after the final multi-toolchain matrix exposed CMake files named `compiler_depend.ts`.
+- Phase 4 backend feature expansion is frozen. The next recommended phase is 4.5 product/frontend work, followed by a measured 72-hour minimum live-shadow campaign before any explicit live-market consideration.

@@ -1,1 +1,10 @@
-{"extends":"../../tsconfig.base.json","compilerOptions":{"outDir":"dist","rootDir":"src"},"include":["src"],"references":[{"path":"../../packages/shared"},{"path":"../../packages/expression-engine"}]}
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": { "outDir": "dist", "rootDir": "src" },
+  "include": ["src"],
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/expression-engine" },
+    { "path": "../../packages/hft-engine" }
+  ]
+}

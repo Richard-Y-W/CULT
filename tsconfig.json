@@ -7,6 +7,7 @@
     { "path": "packages/index-engine" },
     { "path": "packages/market-engine" },
     { "path": "packages/research-engine" },
+    { "path": "packages/hft-engine" },
     { "path": "apps/api" },
     { "path": "apps/web" },
     { "path": "apps/worker" }

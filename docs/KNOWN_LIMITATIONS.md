@@ -3,9 +3,9 @@
 - Default product histories, semantic labels, events, prices, and four-platform statistics are synthetic. Live Bluesky aggregate collection exists but does not replace the demo history automatically.
 - COIP-1 has one live source. It is a provisional Bluesky panel, not a representative cross-platform or human-population measurement.
 - Trading API state is still process-local and resets on restart. The live worker persists observations, watermarks, and source health to PostgreSQL; full trading repository migration remains incomplete.
-- The initial PostgreSQL migration and seed scripts were not executed in this build environment because its Docker daemon was unavailable; they require a live PostgreSQL 16 instance for verification.
+- PostgreSQL migrations, including the Phase 4 event/exchange schema, were not executed locally because Docker's daemon is unavailable; GitHub CI owns PostgreSQL 16 verification.
 - Authentication is a development cookie/account, not production identity infrastructure.
-- The product execution path remains immediate. C++ virtual liquidity, impact, spread, borrow cost, leverage, margin-call, and liquidation primitives are experimental and not yet the API execution path.
+- The public product execution path remains the Phase 1 immediate-fill demo. The deterministic C++ CULT-X L3 book, latency, queue, risk, halt, and strategy paths are an experimental research simulator and are not yet the user-order API path.
 - The C++ backtester enforces a time-bounded DataView and next-bar-by-default execution. It models commission, spread, square-root virtual impact, shorts, borrow/funding, exposure, VaR/ES, and drawdown duration. Its parameters are simulated rather than empirically calibrated. The UI still runs the older TypeScript example.
 - Cultural baskets contain fewer constituents than their names imply; custom indexes have a schema boundary but no editor yet.
 - Semantic labels are synthetic, English-oriented examples and support no demographic inference. Curated semantic indexes are labelled CURATED, not empirical.
@@ -19,3 +19,12 @@
 - Standardization remains `CALIBRATING` until a fixed 30-day period reaches 95% minute coverage. No official fixed content/language weights are currently claimed.
 - Optional Node-API and pybind11 source boundaries exist. This Windows image lacks Node/Python development headers, so local binding binaries were not built; CI owns the supported Linux compile path.
 - C++ property testing covers deterministic hostile bytes and extreme combining input, but a coverage-guided libFuzzer corpus/job is not yet present.
+- Phase 4 engagement/cascade behavior is empirically uncalibrated. The synthetic weights, half-lives, signal thresholds, agents, liquidity, fees, and latency are scenario parameters—not observed market facts.
+- Bluesky engagement attribution is transient and observation-dependent: a like/repost/reply can be linked only when the referenced expression-bearing post is already in the process map. Out-of-order or pre-start subjects remain unresolved. Jetstream is provisional for research completeness/authenticity, per Bluesky's own guidance.
+- No 72-hour live-shadow validation has been completed. `live-market` is gated but not approved, enabled, or claimed to work authoritatively.
+- The Phase 4 PostgreSQL schema exists, but live event-tape repositories do not yet write all simulation tables; synthetic JSON plus optional Parquet export is the working replay path.
+- Quant endpoints expose a deterministic Great Cry Shock fixture, not a multi-user live venue. A production authenticated WebSocket transport, sequence-gap recovery service, private order channel, and public L3 privacy policy are not implemented.
+- The native baseline agent SDK is trusted/local only. Hosted arbitrary strategy execution, container/WASM isolation, resource quotas, multi-venue routing, full agent ecology, and public competitions are not implemented.
+- Markout, realized-spread, adverse-selection, and P&L decomposition formulas exist, but complete horizon-series reports require longer market tapes than the canonical compact demo.
+- Snapshot/restore currently covers the exchange book/tape state. Full scheduler callbacks, agent RNG/state, and cross-process checkpoint recovery are not yet serialized.
+- C++ benchmarks measure isolated in-memory operations without persistence, networking, serialization, or allocation/RSS counters; they are not production throughput claims.

@@ -32,3 +32,18 @@ The expanded executable updates all rolling pair states and reports actual pair 
 |      100,000 |       1,000 | 499,500 × 100 |          46.16M |           0.67M |               6.31M |                 19.71M |
 
 The 1,000-expression case deliberately uses only 100 bars because a full dense matrix already performs 49.95 million pair updates and consumes materially more state. This supports the planned sparse/top-K boundary at larger universes; it is not a claim that 1,000 expressions should be recomputed densely on every live tick. Timings varied because the three processes ran concurrently. Peak RSS and allocations remain unmeasured and are not estimated.
+
+## Phase 4 deterministic exchange run
+
+Command: `build/phase4-release/cult_hft_benchmarks 1000000`. Compiler and build were GCC 13.2.0, C++20, Release, Ninja, Windows x86-64. Hardware details and allocation/RSS counters were not available and are not inferred.
+
+| Operation                               |     Count |    Elapsed |     Measured rate |
+| --------------------------------------- | --------: | ---------: | ----------------: |
+| insert + cancel cycle                   | 1,000,000 | 0.396325 s | 2.52318M cycles/s |
+| same-price replace                      | 1,000,000 | 0.323348 s |        3.09265M/s |
+| passive insert + aggressive match cycle | 1,000,000 | 0.459647 s | 2.17558M cycles/s |
+| L2 10-level snapshot                    |   100,000 | 0.021054 s |        4.74971M/s |
+| scheduled callback                      |   100,000 | 0.017685 s |        5.65454M/s |
+| simple strategy callback                | 1,000,000 | 0.016793 s |        59.5486M/s |
+
+These are isolated single-process microbenchmarks with deterministic synthetic orders. A cycle may emit multiple venue events, so the rates are not interchangeable with wire messages or trades. They exclude persistence, serialization, networking, risk orchestration, and user code. CULT is described as a deterministic high-frequency exchange simulator, not as production exchange or colocation infrastructure.

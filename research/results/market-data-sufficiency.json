@@ -1,0 +1,19 @@
+{
+  "classification": "SYNTHETIC_EXPERIMENTAL",
+  "dataset": "CULT-SYNTHETIC-EVENTS-20260821",
+  "methodologyVersion": "CULT-DATA-LIQUIDITY-1",
+  "assets": {
+    "expr_crying_face": {
+      "status": "EXPERIMENTAL",
+      "eventRatePerSecond": 1,
+      "medianInterarrivalSeconds": 1,
+      "zeroWindowProbability": 0,
+      "fano": 0,
+      "burstiness": -1,
+      "recommendedTier": "TIER_1_HFT_ELIGIBLE",
+      "events": 80,
+      "referenceUpdateRecommendation": "1_SECOND"
+    }
+  },
+  "limitation": "Recommendations are mechanical scenario diagnostics, not calibrated live thresholds."
+}

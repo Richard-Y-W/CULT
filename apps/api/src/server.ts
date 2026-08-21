@@ -30,16 +30,19 @@ import {
   priceDiscoveryRegression,
   spearman,
 } from "@cult/research-engine";
+import { createPhase4Demo, resolveDataMode } from "@cult/hft-engine";
 const port = Number(process.env.PORT ?? 4100),
   data = generateSynthetic(),
   prices = Object.fromEntries(ASSETS.map((a) => [a.id, a.marketPrice])),
   market = new SimulatedMarket(1_000_000n, prices),
   started = Date.now();
-const dataMode = process.env.CULT_DATA_MODE ?? "synthetic",
+const dataMode = resolveDataMode(process.env),
+  empiricalMode = dataMode === "live-shadow" || dataMode === "live-market",
   livePool =
-    dataMode === "live" && process.env.DATABASE_URL
+    empiricalMode && process.env.DATABASE_URL
       ? new pg.Pool({ connectionString: process.env.DATABASE_URL })
       : null;
+const phase4Demo = createPhase4Demo("great-cry");
 const user = {
   id: "user_demo",
   username: "cryingcapital",
@@ -215,13 +218,13 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
       methodologyVersion: "REF-JEFFREYS-1",
     });
   if (path === "/api/v1/data/status") {
-    if (dataMode === "live" && livePool) {
+    if (empiricalMode && livePool) {
       const result = await livePool.query(
         `SELECT source_id,state,last_event_at,last_receive_at,stream_lag_ms,lag_p50_ms,lag_p95_ms,lag_p99_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version,observed_at FROM source_health_snapshots_v2 ORDER BY observed_at DESC LIMIT 1`,
       );
       return json(res, 200, {
         data: {
-          mode: "LIVE",
+          mode: dataMode === "live-shadow" ? "LIVE_SHADOW" : "LIVE_MARKET",
           panel: "COIP-1.1",
           coverageSources: 1,
           status: "PROVISIONAL",
@@ -301,7 +304,7 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
         analytics: assetAnalytics(asset.id),
         latestSemantics: data.semantics[asset.id]?.at(-1),
         referenceMetrics:
-          (dataMode === "live" ? await liveReferenceMetrics(asset.id) : null) ??
+          (empiricalMode ? await liveReferenceMetrics(asset.id) : null) ??
           syntheticReferenceMetrics(asset.id),
       },
     });
@@ -465,8 +468,9 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
       provenance: {
         mode: dataMode.toUpperCase(),
         methodologyVersion: "REF-JEFFREYS-1",
-        sourceVersion:
-          dataMode === "live" ? "BLUESKY-JETSTREAM-1" : "SYNTHETIC-20260821",
+        sourceVersion: empiricalMode
+          ? "BLUESKY-JETSTREAM-1"
+          : "SYNTHETIC-20260821",
         expressionRegistryVersion: "EMOJI-17.0-CULT-V1",
       },
     });
@@ -537,6 +541,96 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
         "In-sample synthetic diagnostic; not evidence of predictive power.",
     });
   }
+  if (path === "/api/v1/quant/market-monitor")
+    return json(res, 200, {
+      data: [
+        {
+          ticker: "CRY",
+          reference: phase4Demo.state.reference,
+          market: phase4Demo.state.market,
+          basisPercent: phase4Demo.state.basisPercent,
+          spreadTicks: phase4Demo.microstructure.spreadTicks,
+          eventRate: phase4Demo.state.creationFlow,
+          quality: "SYNTHETIC_SCENARIO",
+        },
+      ],
+      classification: "EXPERIMENTAL",
+      venue: "CULT-X",
+    });
+  if (path === "/api/v1/quant/assets")
+    return json(res, 200, { data: [{ ticker: "CRY", ...phase4Demo.state }] });
+  const quantAsset = path.match(
+    /^\/api\/v1\/quant\/assets\/([^/]+)\/(state|tape|depth|flow|cascades|microstructure|execution|latency)$/,
+  );
+  if (quantAsset) {
+    if (quantAsset[1]!.toUpperCase() !== "CRY")
+      return json(res, 404, {
+        error: "No Phase 4 scenario tape for expression",
+      });
+    const part = quantAsset[2];
+    if (part === "state")
+      return json(res, 200, {
+        data: phase4Demo.state,
+        manifest: phase4Demo.manifest,
+      });
+    if (part === "tape")
+      return json(res, 200, {
+        expression: phase4Demo.expressionTape,
+        signals: phase4Demo.signalTape,
+        market: phase4Demo.marketTape,
+        manifest: phase4Demo.manifest,
+      });
+    if (part === "depth")
+      return json(res, 200, {
+        data: phase4Demo.microstructure.depth,
+        sequence: phase4Demo.marketTape.at(-1)?.sequence,
+        venue: "CULT-X",
+      });
+    if (part === "flow" || part === "microstructure")
+      return json(res, 200, {
+        data: phase4Demo.microstructure,
+        methodologyVersion: "CULT-MICROSTRUCTURE-1",
+      });
+    if (part === "cascades")
+      return json(res, 200, {
+        data: {
+          cascadeHhi: phase4Demo.state.cascadeHhi,
+          effectiveCascades: phase4Demo.state.effectiveCascades,
+          breadth: phase4Demo.state.breadth,
+        },
+        methodologyVersion: "CULT-BEHAVIOR-1",
+      });
+    if (part === "execution")
+      return json(res, 200, {
+        data: {
+          trades: phase4Demo.marketTape.filter(
+            (event) => event.type === "TRADE",
+          ),
+          note: "Synthetic deterministic exchange tape; markout horizons require a longer replay.",
+        },
+      });
+    return json(res, 200, {
+      data: {
+        feedNs: 1_000_000,
+        processingNs: 1_000_000,
+        orderNs: 3_000_000,
+        cancelNs: 3_000_000,
+      },
+      classification: "SYNTHETIC_CONFIG",
+    });
+  }
+  if (path === "/api/v1/quant/heatmaps")
+    return json(res, 200, { data: phase4Demo.heatmaps });
+  if (path === "/api/v1/quant/risk")
+    return json(res, 200, { data: phase4Demo.risk });
+  if (path === "/api/v1/quant/factors")
+    return json(res, 200, {
+      data: {
+        behavior: phase4Demo.signalTape,
+        market: phase4Demo.microstructure,
+      },
+      classification: "EXPERIMENTAL",
+    });
   if (path === "/api/v1/research")
     return json(res, 200, {
       data: [

@@ -1,0 +1,3260 @@
+{
+  "manifest": {
+    "runId": "phase4-great-cry-20260821",
+    "dataset": "CULT-SYNTHETIC-EVENTS-20260821",
+    "scenario": "great-cry",
+    "seed": 20260821,
+    "exchangeConfig": "CULT-X-1",
+    "signalMethodology": "CULT-BEHAVIOR-1",
+    "mode": "SYNTHETIC",
+    "outputHash": "46c328627c5369504e66ee30b765825ad4fc28cec95becff32909e962efdb49b"
+  },
+  "expressionTape": [
+    {
+      "id": 1,
+      "eventTimeNs": "0",
+      "receiveTimeNs": "1000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 2,
+      "eventTimeNs": "100000000",
+      "receiveTimeNs": "101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 3,
+      "eventTimeNs": "1000000000",
+      "receiveTimeNs": "1001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 2,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 4,
+      "eventTimeNs": "1100000000",
+      "receiveTimeNs": "1101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 2,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 5,
+      "eventTimeNs": "2000000000",
+      "receiveTimeNs": "2001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 3,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 6,
+      "eventTimeNs": "2100000000",
+      "receiveTimeNs": "2101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 3,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 7,
+      "eventTimeNs": "3000000000",
+      "receiveTimeNs": "3001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 4,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 8,
+      "eventTimeNs": "3100000000",
+      "receiveTimeNs": "3101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 4,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 9,
+      "eventTimeNs": "4000000000",
+      "receiveTimeNs": "4001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 5,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 10,
+      "eventTimeNs": "4100000000",
+      "receiveTimeNs": "4101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 5,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 11,
+      "eventTimeNs": "5000000000",
+      "receiveTimeNs": "5001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 6,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 12,
+      "eventTimeNs": "5100000000",
+      "receiveTimeNs": "5101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 6,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 13,
+      "eventTimeNs": "6000000000",
+      "receiveTimeNs": "6001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 7,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 14,
+      "eventTimeNs": "6100000000",
+      "receiveTimeNs": "6101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 7,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 15,
+      "eventTimeNs": "7000000000",
+      "receiveTimeNs": "7001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 8,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 16,
+      "eventTimeNs": "7100000000",
+      "receiveTimeNs": "7101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 8,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 17,
+      "eventTimeNs": "8000000000",
+      "receiveTimeNs": "8001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 9,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 18,
+      "eventTimeNs": "8100000000",
+      "receiveTimeNs": "8101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 9,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 19,
+      "eventTimeNs": "9000000000",
+      "receiveTimeNs": "9001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 10,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 20,
+      "eventTimeNs": "9100000000",
+      "receiveTimeNs": "9101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 10,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 21,
+      "eventTimeNs": "10000000000",
+      "receiveTimeNs": "10001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 11,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 22,
+      "eventTimeNs": "10100000000",
+      "receiveTimeNs": "10101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 11,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 23,
+      "eventTimeNs": "11000000000",
+      "receiveTimeNs": "11001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 12,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 24,
+      "eventTimeNs": "11100000000",
+      "receiveTimeNs": "11101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 12,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 25,
+      "eventTimeNs": "12000000000",
+      "receiveTimeNs": "12001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 13,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 26,
+      "eventTimeNs": "12100000000",
+      "receiveTimeNs": "12101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 13,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 27,
+      "eventTimeNs": "13000000000",
+      "receiveTimeNs": "13001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 14,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 28,
+      "eventTimeNs": "13100000000",
+      "receiveTimeNs": "13101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 14,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 29,
+      "eventTimeNs": "14000000000",
+      "receiveTimeNs": "14001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 15,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 30,
+      "eventTimeNs": "14100000000",
+      "receiveTimeNs": "14101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 15,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 31,
+      "eventTimeNs": "15000000000",
+      "receiveTimeNs": "15001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 16,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 32,
+      "eventTimeNs": "15100000000",
+      "receiveTimeNs": "15101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 16,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 33,
+      "eventTimeNs": "16000000000",
+      "receiveTimeNs": "16001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 17,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 34,
+      "eventTimeNs": "16100000000",
+      "receiveTimeNs": "16101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 17,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 35,
+      "eventTimeNs": "17000000000",
+      "receiveTimeNs": "17001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 18,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 36,
+      "eventTimeNs": "17100000000",
+      "receiveTimeNs": "17101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 18,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 37,
+      "eventTimeNs": "18000000000",
+      "receiveTimeNs": "18001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 19,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 38,
+      "eventTimeNs": "18100000000",
+      "receiveTimeNs": "18101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 19,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 39,
+      "eventTimeNs": "19000000000",
+      "receiveTimeNs": "19001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 20,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 40,
+      "eventTimeNs": "19100000000",
+      "receiveTimeNs": "19101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 20,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 41,
+      "eventTimeNs": "20000000000",
+      "receiveTimeNs": "20001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 21,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 42,
+      "eventTimeNs": "20100000000",
+      "receiveTimeNs": "20101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 21,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 43,
+      "eventTimeNs": "21000000000",
+      "receiveTimeNs": "21001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 22,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 44,
+      "eventTimeNs": "21100000000",
+      "receiveTimeNs": "21101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 22,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 45,
+      "eventTimeNs": "22000000000",
+      "receiveTimeNs": "22001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 23,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 46,
+      "eventTimeNs": "22100000000",
+      "receiveTimeNs": "22101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 23,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 47,
+      "eventTimeNs": "23000000000",
+      "receiveTimeNs": "23001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 24,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 48,
+      "eventTimeNs": "23100000000",
+      "receiveTimeNs": "23101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 24,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 49,
+      "eventTimeNs": "24000000000",
+      "receiveTimeNs": "24001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 25,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 50,
+      "eventTimeNs": "24100000000",
+      "receiveTimeNs": "24101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 25,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 51,
+      "eventTimeNs": "25000000000",
+      "receiveTimeNs": "25001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 26,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 52,
+      "eventTimeNs": "25100000000",
+      "receiveTimeNs": "25101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 26,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 53,
+      "eventTimeNs": "26000000000",
+      "receiveTimeNs": "26001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 27,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 54,
+      "eventTimeNs": "26100000000",
+      "receiveTimeNs": "26101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 27,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 55,
+      "eventTimeNs": "27000000000",
+      "receiveTimeNs": "27001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 28,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 56,
+      "eventTimeNs": "27100000000",
+      "receiveTimeNs": "27101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 28,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 57,
+      "eventTimeNs": "28000000000",
+      "receiveTimeNs": "28001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 29,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 58,
+      "eventTimeNs": "28100000000",
+      "receiveTimeNs": "28101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 29,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 59,
+      "eventTimeNs": "29000000000",
+      "receiveTimeNs": "29001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 30,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 60,
+      "eventTimeNs": "29100000000",
+      "receiveTimeNs": "29101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 30,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 61,
+      "eventTimeNs": "30000000000",
+      "receiveTimeNs": "30001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 31,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 62,
+      "eventTimeNs": "30100000000",
+      "receiveTimeNs": "30101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 31,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 63,
+      "eventTimeNs": "31000000000",
+      "receiveTimeNs": "31001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 32,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 64,
+      "eventTimeNs": "31100000000",
+      "receiveTimeNs": "31101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 32,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 65,
+      "eventTimeNs": "32000000000",
+      "receiveTimeNs": "32001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 33,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 66,
+      "eventTimeNs": "32100000000",
+      "receiveTimeNs": "32101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 33,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 67,
+      "eventTimeNs": "33000000000",
+      "receiveTimeNs": "33001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 34,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 68,
+      "eventTimeNs": "33100000000",
+      "receiveTimeNs": "33101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 34,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 69,
+      "eventTimeNs": "34000000000",
+      "receiveTimeNs": "34001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 35,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 70,
+      "eventTimeNs": "34100000000",
+      "receiveTimeNs": "34101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 35,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 71,
+      "eventTimeNs": "35000000000",
+      "receiveTimeNs": "35001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 36,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 72,
+      "eventTimeNs": "35100000000",
+      "receiveTimeNs": "35101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 36,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 73,
+      "eventTimeNs": "36000000000",
+      "receiveTimeNs": "36001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 37,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 74,
+      "eventTimeNs": "36100000000",
+      "receiveTimeNs": "36101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 37,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 75,
+      "eventTimeNs": "37000000000",
+      "receiveTimeNs": "37001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 38,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 76,
+      "eventTimeNs": "37100000000",
+      "receiveTimeNs": "37101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 38,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 77,
+      "eventTimeNs": "38000000000",
+      "receiveTimeNs": "38001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 39,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 78,
+      "eventTimeNs": "38100000000",
+      "receiveTimeNs": "38101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 39,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 79,
+      "eventTimeNs": "39000000000",
+      "receiveTimeNs": "39001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 40,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 80,
+      "eventTimeNs": "39100000000",
+      "receiveTimeNs": "39101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 40,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 81,
+      "eventTimeNs": "40000000000",
+      "receiveTimeNs": "40001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 41,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 82,
+      "eventTimeNs": "40100000000",
+      "receiveTimeNs": "40101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 41,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 83,
+      "eventTimeNs": "41000000000",
+      "receiveTimeNs": "41001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 42,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 84,
+      "eventTimeNs": "41100000000",
+      "receiveTimeNs": "41101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 42,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 85,
+      "eventTimeNs": "42000000000",
+      "receiveTimeNs": "42001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 43,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 86,
+      "eventTimeNs": "42100000000",
+      "receiveTimeNs": "42101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 43,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 87,
+      "eventTimeNs": "43000000000",
+      "receiveTimeNs": "43001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 44,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 88,
+      "eventTimeNs": "43100000000",
+      "receiveTimeNs": "43101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 44,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 89,
+      "eventTimeNs": "44000000000",
+      "receiveTimeNs": "44001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 45,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 90,
+      "eventTimeNs": "44100000000",
+      "receiveTimeNs": "44101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 45,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 91,
+      "eventTimeNs": "45000000000",
+      "receiveTimeNs": "45001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 46,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 92,
+      "eventTimeNs": "45100000000",
+      "receiveTimeNs": "45101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 46,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 93,
+      "eventTimeNs": "46000000000",
+      "receiveTimeNs": "46001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 47,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 94,
+      "eventTimeNs": "46100000000",
+      "receiveTimeNs": "46101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 47,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 95,
+      "eventTimeNs": "47000000000",
+      "receiveTimeNs": "47001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 48,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 96,
+      "eventTimeNs": "47100000000",
+      "receiveTimeNs": "47101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 48,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 97,
+      "eventTimeNs": "48000000000",
+      "receiveTimeNs": "48001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 49,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 98,
+      "eventTimeNs": "48100000000",
+      "receiveTimeNs": "48101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 49,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 99,
+      "eventTimeNs": "49000000000",
+      "receiveTimeNs": "49001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 50,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 100,
+      "eventTimeNs": "49100000000",
+      "receiveTimeNs": "49101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 50,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 101,
+      "eventTimeNs": "50000000000",
+      "receiveTimeNs": "50001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 51,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 102,
+      "eventTimeNs": "50100000000",
+      "receiveTimeNs": "50101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 51,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 103,
+      "eventTimeNs": "51000000000",
+      "receiveTimeNs": "51001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 52,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 104,
+      "eventTimeNs": "51100000000",
+      "receiveTimeNs": "51101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 52,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 105,
+      "eventTimeNs": "52000000000",
+      "receiveTimeNs": "52001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 53,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 106,
+      "eventTimeNs": "52100000000",
+      "receiveTimeNs": "52101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 53,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 107,
+      "eventTimeNs": "53000000000",
+      "receiveTimeNs": "53001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 54,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 108,
+      "eventTimeNs": "53100000000",
+      "receiveTimeNs": "53101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 54,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 109,
+      "eventTimeNs": "54000000000",
+      "receiveTimeNs": "54001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 55,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 110,
+      "eventTimeNs": "54100000000",
+      "receiveTimeNs": "54101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 55,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 111,
+      "eventTimeNs": "55000000000",
+      "receiveTimeNs": "55001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 56,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 112,
+      "eventTimeNs": "55100000000",
+      "receiveTimeNs": "55101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 56,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 113,
+      "eventTimeNs": "56000000000",
+      "receiveTimeNs": "56001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 57,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 114,
+      "eventTimeNs": "56100000000",
+      "receiveTimeNs": "56101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 57,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 115,
+      "eventTimeNs": "57000000000",
+      "receiveTimeNs": "57001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 58,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 116,
+      "eventTimeNs": "57100000000",
+      "receiveTimeNs": "57101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 58,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 117,
+      "eventTimeNs": "58000000000",
+      "receiveTimeNs": "58001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 59,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 118,
+      "eventTimeNs": "58100000000",
+      "receiveTimeNs": "58101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 59,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 119,
+      "eventTimeNs": "59000000000",
+      "receiveTimeNs": "59001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 60,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 120,
+      "eventTimeNs": "59100000000",
+      "receiveTimeNs": "59101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 60,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 121,
+      "eventTimeNs": "60000000000",
+      "receiveTimeNs": "60001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 61,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 122,
+      "eventTimeNs": "60100000000",
+      "receiveTimeNs": "60101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 61,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 123,
+      "eventTimeNs": "61000000000",
+      "receiveTimeNs": "61001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 62,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 124,
+      "eventTimeNs": "61100000000",
+      "receiveTimeNs": "61101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 62,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 125,
+      "eventTimeNs": "62000000000",
+      "receiveTimeNs": "62001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 63,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 126,
+      "eventTimeNs": "62100000000",
+      "receiveTimeNs": "62101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 63,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 127,
+      "eventTimeNs": "63000000000",
+      "receiveTimeNs": "63001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 64,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 128,
+      "eventTimeNs": "63100000000",
+      "receiveTimeNs": "63101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 64,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 129,
+      "eventTimeNs": "64000000000",
+      "receiveTimeNs": "64001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 65,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 130,
+      "eventTimeNs": "64100000000",
+      "receiveTimeNs": "64101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 65,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 131,
+      "eventTimeNs": "65000000000",
+      "receiveTimeNs": "65001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 66,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 132,
+      "eventTimeNs": "65100000000",
+      "receiveTimeNs": "65101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 66,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 133,
+      "eventTimeNs": "66000000000",
+      "receiveTimeNs": "66001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 67,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 134,
+      "eventTimeNs": "66100000000",
+      "receiveTimeNs": "66101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 67,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 135,
+      "eventTimeNs": "67000000000",
+      "receiveTimeNs": "67001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 68,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 136,
+      "eventTimeNs": "67100000000",
+      "receiveTimeNs": "67101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 68,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 137,
+      "eventTimeNs": "68000000000",
+      "receiveTimeNs": "68001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 69,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 138,
+      "eventTimeNs": "68100000000",
+      "receiveTimeNs": "68101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 69,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 139,
+      "eventTimeNs": "69000000000",
+      "receiveTimeNs": "69001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 70,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 140,
+      "eventTimeNs": "69100000000",
+      "receiveTimeNs": "69101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 70,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 141,
+      "eventTimeNs": "70000000000",
+      "receiveTimeNs": "70001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 71,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 142,
+      "eventTimeNs": "70100000000",
+      "receiveTimeNs": "70101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 71,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 143,
+      "eventTimeNs": "71000000000",
+      "receiveTimeNs": "71001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 72,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 144,
+      "eventTimeNs": "71100000000",
+      "receiveTimeNs": "71101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 72,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 145,
+      "eventTimeNs": "72000000000",
+      "receiveTimeNs": "72001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 73,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 146,
+      "eventTimeNs": "72100000000",
+      "receiveTimeNs": "72101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 73,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 147,
+      "eventTimeNs": "73000000000",
+      "receiveTimeNs": "73001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 74,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 148,
+      "eventTimeNs": "73100000000",
+      "receiveTimeNs": "73101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 74,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 149,
+      "eventTimeNs": "74000000000",
+      "receiveTimeNs": "74001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 75,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 150,
+      "eventTimeNs": "74100000000",
+      "receiveTimeNs": "74101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 75,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 151,
+      "eventTimeNs": "75000000000",
+      "receiveTimeNs": "75001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 76,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 152,
+      "eventTimeNs": "75100000000",
+      "receiveTimeNs": "75101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 76,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 153,
+      "eventTimeNs": "76000000000",
+      "receiveTimeNs": "76001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 77,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 154,
+      "eventTimeNs": "76100000000",
+      "receiveTimeNs": "76101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 77,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 155,
+      "eventTimeNs": "77000000000",
+      "receiveTimeNs": "77001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 78,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 156,
+      "eventTimeNs": "77100000000",
+      "receiveTimeNs": "77101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 78,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 157,
+      "eventTimeNs": "78000000000",
+      "receiveTimeNs": "78001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 79,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 158,
+      "eventTimeNs": "78100000000",
+      "receiveTimeNs": "78101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 79,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 159,
+      "eventTimeNs": "79000000000",
+      "receiveTimeNs": "79001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 80,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 160,
+      "eventTimeNs": "79100000000",
+      "receiveTimeNs": "79101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 80,
+      "engagement": {
+        "likes": 10,
+        "reposts": 5,
+        "quotes": 2,
+        "replies": 3
+      },
+      "isBackfill": false
+    }
+  ],
+  "signalTape": [
+    {
+      "id": 1,
+      "eventTimeNs": "80005000000",
+      "expressionId": "expr_crying_face",
+      "type": "PREVALENCE_SHOCK",
+      "value": 80,
+      "zScore": 3.2,
+      "methodologyVersion": "CULT-BEHAVIOR-1"
+    },
+    {
+      "id": 2,
+      "eventTimeNs": "80005000000",
+      "expressionId": "expr_crying_face",
+      "type": "AMPLIFICATION_SHOCK",
+      "value": 1195.216925,
+      "zScore": 5.2,
+      "methodologyVersion": "CULT-BEHAVIOR-1"
+    },
+    {
+      "id": 3,
+      "eventTimeNs": "80005000000",
+      "expressionId": "expr_crying_face",
+      "type": "ATTENTION_BLOCK",
+      "value": 0.9875,
+      "zScore": 4.8,
+      "methodologyVersion": "CULT-BEHAVIOR-1"
+    }
+  ],
+  "marketTape": [
+    {
+      "sequence": 1,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 1,
+      "priceTicks": 1000,
+      "quantity": 1000
+    },
+    {
+      "sequence": 2,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 1,
+      "priceTicks": 1000,
+      "quantity": 1000
+    },
+    {
+      "sequence": 3,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 2,
+      "priceTicks": 1002,
+      "quantity": 1000
+    },
+    {
+      "sequence": 4,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 2,
+      "priceTicks": 1002,
+      "quantity": 1000
+    },
+    {
+      "sequence": 5,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 3,
+      "priceTicks": 999,
+      "quantity": 1000
+    },
+    {
+      "sequence": 6,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 3,
+      "priceTicks": 999,
+      "quantity": 1000
+    },
+    {
+      "sequence": 7,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 4,
+      "priceTicks": 1003,
+      "quantity": 1000
+    },
+    {
+      "sequence": 8,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 4,
+      "priceTicks": 1003,
+      "quantity": 1000
+    },
+    {
+      "sequence": 9,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 5,
+      "priceTicks": 998,
+      "quantity": 1000
+    },
+    {
+      "sequence": 10,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 5,
+      "priceTicks": 998,
+      "quantity": 1000
+    },
+    {
+      "sequence": 11,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 6,
+      "priceTicks": 1004,
+      "quantity": 1000
+    },
+    {
+      "sequence": 12,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 6,
+      "priceTicks": 1004,
+      "quantity": 1000
+    },
+    {
+      "sequence": 13,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 7,
+      "priceTicks": 997,
+      "quantity": 1000
+    },
+    {
+      "sequence": 14,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 7,
+      "priceTicks": 997,
+      "quantity": 1000
+    },
+    {
+      "sequence": 15,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 8,
+      "priceTicks": 1005,
+      "quantity": 1000
+    },
+    {
+      "sequence": 16,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 8,
+      "priceTicks": 1005,
+      "quantity": 1000
+    },
+    {
+      "sequence": 17,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 9,
+      "priceTicks": 996,
+      "quantity": 1000
+    },
+    {
+      "sequence": 18,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 9,
+      "priceTicks": 996,
+      "quantity": 1000
+    },
+    {
+      "sequence": 19,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 10,
+      "priceTicks": 1006,
+      "quantity": 1000
+    },
+    {
+      "sequence": 20,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 10,
+      "priceTicks": 1006,
+      "quantity": 1000
+    },
+    {
+      "sequence": 21,
+      "exchangeTimeNs": "80005000000",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 11,
+      "priceTicks": 0,
+      "quantity": 1259
+    },
+    {
+      "sequence": 22,
+      "exchangeTimeNs": "80005000000",
+      "type": "TRADE",
+      "orderId": 11,
+      "contraOrderId": 2,
+      "priceTicks": 1002,
+      "quantity": 1000,
+      "aggressorSide": "BUY"
+    },
+    {
+      "sequence": 23,
+      "exchangeTimeNs": "80005000000",
+      "type": "TRADE",
+      "orderId": 11,
+      "contraOrderId": 4,
+      "priceTicks": 1003,
+      "quantity": 259,
+      "aggressorSide": "BUY"
+    }
+  ],
+  "state": {
+    "expression": "expr_crying_face",
+    "reference": 1006.998333,
+    "market": 1001.5,
+    "basisPercent": -0.00546,
+    "prevalenceDocuments": 80,
+    "creationFlow": 80,
+    "likeFlow": 800,
+    "repostFlow": 400,
+    "quoteFlow": 160,
+    "replyFlow": 240,
+    "amplification": 1195.216925,
+    "propagation": 7,
+    "cascadeHhi": 0.0125,
+    "effectiveCascades": 80,
+    "breadth": 80,
+    "dataLiquidityTier": "TIER_2_FAST"
+  },
+  "microstructure": {
+    "bid": 1000,
+    "ask": 1003,
+    "midpoint": 1001.5,
+    "spreadTicks": 3,
+    "microprice": 1001.723148,
+    "imbalanceL1": 0.148765,
+    "imbalanceL5": 0,
+    "tradeImbalance": 1,
+    "ofi": 1259,
+    "depth": [
+      {
+        "side": "BID",
+        "priceTicks": 1000,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1002,
+        "quantity": 0
+      },
+      {
+        "side": "BID",
+        "priceTicks": 999,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1003,
+        "quantity": 741
+      },
+      {
+        "side": "BID",
+        "priceTicks": 998,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1004,
+        "quantity": 1000
+      },
+      {
+        "side": "BID",
+        "priceTicks": 997,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1005,
+        "quantity": 1000
+      },
+      {
+        "side": "BID",
+        "priceTicks": 996,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1006,
+        "quantity": 1000
+      }
+    ]
+  },
+  "risk": {
+    "state": "NORMAL",
+    "killed": false,
+    "grossExposure": 1260888.5,
+    "netExposure": 1260888.5,
+    "leverage": 0.126089,
+    "marginUtilization": 0.037827
+  },
+  "heatmaps": {
+    "depth": {
+      "x": [
+        "1000",
+        "1002",
+        "999",
+        "1003",
+        "998",
+        "1004",
+        "997",
+        "1005",
+        "996",
+        "1006"
+      ],
+      "y": [
+        "quantity"
+      ],
+      "values": [
+        [
+          1000,
+          0,
+          1000,
+          741,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "units": "lots",
+      "timestamp": "80005000000",
+      "methodology": "CULT-X-1"
+    },
+    "signals": {
+      "x": [
+        "PREV",
+        "AMP",
+        "PROP",
+        "CONC"
+      ],
+      "y": [
+        "CRY"
+      ],
+      "values": [
+        [
+          80,
+          1195.2169245915804,
+          7,
+          0.0125
+        ]
+      ],
+      "units": "mixed; see signal dictionary",
+      "timestamp": "80005000000",
+      "methodology": "CULT-BEHAVIOR-1"
+    }
+  }
+}

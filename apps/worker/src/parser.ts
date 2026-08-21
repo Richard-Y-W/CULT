@@ -1,7 +1,11 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { EmojiRegistry } from "@cult/expression-engine";
-import type { ContentBucket, ParsedDocument } from "./types.js";
+import type {
+  ContentBucket,
+  ParsedBehaviorEvent,
+  ParsedDocument,
+} from "./types.js";
 const eventSchema = z.object({
   did: z.string().min(1),
   time_us: z.number().int().nonnegative(),
@@ -28,6 +32,8 @@ export class EventDeduplicator {
   }
 }
 export class BlueskyEventParser {
+  private readonly postExpressions = new Map<string, string[]>();
+  private readonly cascadeRoots = new Map<string, string>();
   constructor(
     private readonly registry: EmojiRegistry,
     private readonly deduplicator = new EventDeduplicator(),
@@ -35,33 +41,94 @@ export class BlueskyEventParser {
   parse(
     raw: string,
     receivedAtMs = Date.now(),
-  ): { document?: ParsedDocument; duplicate: boolean; malformed: boolean } {
+  ): {
+    document?: ParsedDocument;
+    behaviorEvents: ParsedBehaviorEvent[];
+    duplicate: boolean;
+    malformed: boolean;
+  } {
     let decoded: unknown;
     try {
       decoded = JSON.parse(raw);
     } catch {
-      return { duplicate: false, malformed: true };
+      return { behaviorEvents: [], duplicate: false, malformed: true };
     }
     const result = eventSchema.safeParse(decoded);
-    if (!result.success) return { duplicate: false, malformed: true };
+    if (!result.success)
+      return { behaviorEvents: [], duplicate: false, malformed: true };
     const event = result.data,
       commit = event.commit;
     if (event.kind !== "commit" || !commit)
-      return { duplicate: false, malformed: false };
+      return { behaviorEvents: [], duplicate: false, malformed: false };
     const id = createHash("sha256")
       .update(
         `${event.did}/${commit.collection}/${commit.rkey}/${commit.cid ?? commit.operation}`,
       )
       .digest("hex");
     if (this.deduplicator.seen(id, receivedAtMs))
-      return { duplicate: true, malformed: false };
+      return { behaviorEvents: [], duplicate: true, malformed: false };
+    const recordUri = `at://${event.did}/${commit.collection}/${commit.rkey}`,
+      eventAtMs = Math.floor(event.time_us / 1000),
+      behaviorEvents: ParsedBehaviorEvent[] = [],
+      strongRefUri = (value: unknown) => {
+        if (!value || typeof value !== "object") return undefined;
+        const uri = (value as Record<string, unknown>).uri;
+        return typeof uri === "string" ? uri : undefined;
+      };
+    if (
+      commit.operation === "delete" &&
+      commit.collection === "app.bsky.feed.post"
+    ) {
+      const expressionIds = this.postExpressions.get(recordUri) ?? [];
+      if (expressionIds.length)
+        behaviorEvents.push({
+          eventId: id,
+          cursor: event.time_us,
+          eventAtMs,
+          receivedAtMs,
+          actorId: event.did,
+          expressionIds,
+          type: "DELETE",
+          cascadeUri: this.cascadeRoots.get(recordUri) ?? recordUri,
+          recordUri,
+        });
+      this.postExpressions.delete(recordUri);
+      this.cascadeRoots.delete(recordUri);
+      return { behaviorEvents, duplicate: false, malformed: false };
+    }
+    if (
+      commit.operation === "create" &&
+      (commit.collection === "app.bsky.feed.like" ||
+        commit.collection === "app.bsky.feed.repost") &&
+      commit.record
+    ) {
+      const subjectUri = strongRefUri(commit.record.subject),
+        expressionIds = subjectUri
+          ? (this.postExpressions.get(subjectUri) ?? [])
+          : [];
+      if (subjectUri && expressionIds.length)
+        behaviorEvents.push({
+          eventId: id,
+          cursor: event.time_us,
+          eventAtMs,
+          receivedAtMs,
+          actorId: event.did,
+          expressionIds,
+          type: commit.collection === "app.bsky.feed.like" ? "LIKE" : "REPOST",
+          cascadeUri: this.cascadeRoots.get(subjectUri) ?? subjectUri,
+          parentCascadeUri: subjectUri,
+          recordUri,
+        });
+      if (commit.collection === "app.bsky.feed.like")
+        return { behaviorEvents, duplicate: false, malformed: false };
+    }
     if (commit.collection === "app.bsky.feed.repost")
       return {
         document: {
           eventId: id,
           cursor: event.time_us,
           receivedAtMs,
-          eventAtMs: Math.floor(event.time_us / 1000),
+          eventAtMs,
           actorId: event.did,
           text: "",
           langs: [],
@@ -69,6 +136,7 @@ export class BlueskyEventParser {
           eligible: false,
           matches: [],
         },
+        behaviorEvents,
         duplicate: false,
         malformed: false,
       };
@@ -77,7 +145,7 @@ export class BlueskyEventParser {
       commit.operation !== "create" ||
       !commit.record
     )
-      return { duplicate: false, malformed: false };
+      return { behaviorEvents, duplicate: false, malformed: false };
     const text =
       typeof commit.record.text === "string" ? commit.record.text : "";
     const reply = commit.record.reply !== undefined,
@@ -95,20 +163,67 @@ export class BlueskyEventParser {
         ? commit.record.langs
             .filter((x): x is string => typeof x === "string")
             .slice(0, 3)
-        : [];
+        : [],
+      matches = this.registry.extract(text),
+      expressionIds = matches.map((match) => match.expressionId),
+      replyRecord = commit.record.reply as Record<string, unknown> | undefined,
+      replyRoot = strongRefUri(replyRecord?.root),
+      replyParent = strongRefUri(replyRecord?.parent),
+      embedRecord = embed?.record,
+      quoteTarget = strongRefUri(
+        embedRecord && typeof embedRecord === "object"
+          ? ((embedRecord as Record<string, unknown>).record ?? embedRecord)
+          : undefined,
+      ),
+      cascadeUri = replyRoot ?? recordUri;
+    this.postExpressions.set(recordUri, expressionIds);
+    this.cascadeRoots.set(recordUri, cascadeUri);
+    if (expressionIds.length)
+      behaviorEvents.push({
+        eventId: id,
+        cursor: event.time_us,
+        eventAtMs,
+        receivedAtMs,
+        actorId: event.did,
+        expressionIds,
+        type: "CREATE",
+        cascadeUri,
+        ...(replyParent ? { parentCascadeUri: replyParent } : {}),
+        recordUri,
+      });
+    const engagementTarget = replyParent ?? quoteTarget;
+    if (engagementTarget) {
+      const targetExpressions =
+        this.postExpressions.get(engagementTarget) ?? [];
+      if (targetExpressions.length)
+        behaviorEvents.push({
+          eventId: `${id}:engagement`,
+          cursor: event.time_us,
+          eventAtMs,
+          receivedAtMs,
+          actorId: event.did,
+          expressionIds: targetExpressions,
+          type: replyParent ? "REPLY" : "QUOTE",
+          cascadeUri:
+            this.cascadeRoots.get(engagementTarget) ?? engagementTarget,
+          parentCascadeUri: engagementTarget,
+          recordUri,
+        });
+    }
     return {
       document: {
         eventId: id,
         cursor: event.time_us,
         receivedAtMs,
-        eventAtMs: Math.floor(event.time_us / 1000),
+        eventAtMs,
         actorId: event.did,
         text,
         langs,
         bucket,
         eligible: true,
-        matches: this.registry.extract(text),
+        matches,
       },
+      behaviorEvents,
       duplicate: false,
       malformed: false,
     };

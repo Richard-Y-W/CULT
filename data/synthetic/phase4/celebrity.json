@@ -1,0 +1,730 @@
+{
+  "manifest": {
+    "runId": "phase4-celebrity-20260821",
+    "dataset": "CULT-SYNTHETIC-EVENTS-20260821",
+    "scenario": "celebrity",
+    "seed": 20260821,
+    "exchangeConfig": "CULT-X-1",
+    "signalMethodology": "CULT-BEHAVIOR-1",
+    "mode": "SYNTHETIC",
+    "outputHash": "acf5bea42cbd8e6e02bea0eb5642a293154c40e9aba9ac6d9351ead3a39a199a"
+  },
+  "expressionTape": [
+    {
+      "id": 1,
+      "eventTimeNs": "0",
+      "receiveTimeNs": "1000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 2,
+      "eventTimeNs": "100000000",
+      "receiveTimeNs": "101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 3,
+      "eventTimeNs": "1000000000",
+      "receiveTimeNs": "1001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 4,
+      "eventTimeNs": "1100000000",
+      "receiveTimeNs": "1101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 5,
+      "eventTimeNs": "2000000000",
+      "receiveTimeNs": "2001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 6,
+      "eventTimeNs": "2100000000",
+      "receiveTimeNs": "2101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 7,
+      "eventTimeNs": "3000000000",
+      "receiveTimeNs": "3001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 8,
+      "eventTimeNs": "3100000000",
+      "receiveTimeNs": "3101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 9,
+      "eventTimeNs": "4000000000",
+      "receiveTimeNs": "4001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 10,
+      "eventTimeNs": "4100000000",
+      "receiveTimeNs": "4101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 11,
+      "eventTimeNs": "5000000000",
+      "receiveTimeNs": "5001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 12,
+      "eventTimeNs": "5100000000",
+      "receiveTimeNs": "5101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 13,
+      "eventTimeNs": "6000000000",
+      "receiveTimeNs": "6001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 14,
+      "eventTimeNs": "6100000000",
+      "receiveTimeNs": "6101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 15,
+      "eventTimeNs": "7000000000",
+      "receiveTimeNs": "7001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 16,
+      "eventTimeNs": "7100000000",
+      "receiveTimeNs": "7101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 17,
+      "eventTimeNs": "8000000000",
+      "receiveTimeNs": "8001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 18,
+      "eventTimeNs": "8100000000",
+      "receiveTimeNs": "8101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 19,
+      "eventTimeNs": "9000000000",
+      "receiveTimeNs": "9001000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "CREATE",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 0,
+        "reposts": 0,
+        "quotes": 0,
+        "replies": 0
+      },
+      "isBackfill": false
+    },
+    {
+      "id": 20,
+      "eventTimeNs": "9100000000",
+      "receiveTimeNs": "9101000000",
+      "sourceId": "SYNTHETIC",
+      "expressionIds": [
+        "expr_crying_face"
+      ],
+      "type": "REPOST",
+      "cascadeId": 1,
+      "engagement": {
+        "likes": 80,
+        "reposts": 40,
+        "quotes": 20,
+        "replies": 26
+      },
+      "isBackfill": false
+    }
+  ],
+  "signalTape": [
+    {
+      "id": 1,
+      "eventTimeNs": "10005000000",
+      "expressionId": "expr_crying_face",
+      "type": "PREVALENCE_SHOCK",
+      "value": 10,
+      "zScore": 1.1,
+      "methodologyVersion": "CULT-BEHAVIOR-1"
+    },
+    {
+      "id": 2,
+      "eventTimeNs": "10005000000",
+      "expressionId": "expr_crying_face",
+      "type": "AMPLIFICATION_SHOCK",
+      "value": 343.049288,
+      "zScore": 5.2,
+      "methodologyVersion": "CULT-BEHAVIOR-1"
+    },
+    {
+      "id": 3,
+      "eventTimeNs": "10005000000",
+      "expressionId": "expr_crying_face",
+      "type": "CONCENTRATION_WARNING",
+      "value": 0.15,
+      "zScore": 6.1,
+      "methodologyVersion": "CULT-BEHAVIOR-1"
+    }
+  ],
+  "marketTape": [
+    {
+      "sequence": 1,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 1,
+      "priceTicks": 1000,
+      "quantity": 1000
+    },
+    {
+      "sequence": 2,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 1,
+      "priceTicks": 1000,
+      "quantity": 1000
+    },
+    {
+      "sequence": 3,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 2,
+      "priceTicks": 1002,
+      "quantity": 1000
+    },
+    {
+      "sequence": 4,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 2,
+      "priceTicks": 1002,
+      "quantity": 1000
+    },
+    {
+      "sequence": 5,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 3,
+      "priceTicks": 999,
+      "quantity": 1000
+    },
+    {
+      "sequence": 6,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 3,
+      "priceTicks": 999,
+      "quantity": 1000
+    },
+    {
+      "sequence": 7,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 4,
+      "priceTicks": 1003,
+      "quantity": 1000
+    },
+    {
+      "sequence": 8,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 4,
+      "priceTicks": 1003,
+      "quantity": 1000
+    },
+    {
+      "sequence": 9,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 5,
+      "priceTicks": 998,
+      "quantity": 1000
+    },
+    {
+      "sequence": 10,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 5,
+      "priceTicks": 998,
+      "quantity": 1000
+    },
+    {
+      "sequence": 11,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 6,
+      "priceTicks": 1004,
+      "quantity": 1000
+    },
+    {
+      "sequence": 12,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 6,
+      "priceTicks": 1004,
+      "quantity": 1000
+    },
+    {
+      "sequence": 13,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 7,
+      "priceTicks": 997,
+      "quantity": 1000
+    },
+    {
+      "sequence": 14,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 7,
+      "priceTicks": 997,
+      "quantity": 1000
+    },
+    {
+      "sequence": 15,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 8,
+      "priceTicks": 1005,
+      "quantity": 1000
+    },
+    {
+      "sequence": 16,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 8,
+      "priceTicks": 1005,
+      "quantity": 1000
+    },
+    {
+      "sequence": 17,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 9,
+      "priceTicks": 996,
+      "quantity": 1000
+    },
+    {
+      "sequence": 18,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 9,
+      "priceTicks": 996,
+      "quantity": 1000
+    },
+    {
+      "sequence": 19,
+      "exchangeTimeNs": "0",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 10,
+      "priceTicks": 1006,
+      "quantity": 1000
+    },
+    {
+      "sequence": 20,
+      "exchangeTimeNs": "0",
+      "type": "BOOK_UPDATE",
+      "orderId": 10,
+      "priceTicks": 1006,
+      "quantity": 1000
+    },
+    {
+      "sequence": 21,
+      "exchangeTimeNs": "10005000000",
+      "type": "ORDER_ACCEPTED",
+      "orderId": 11,
+      "priceTicks": 0,
+      "quantity": 157
+    },
+    {
+      "sequence": 22,
+      "exchangeTimeNs": "10005000000",
+      "type": "TRADE",
+      "orderId": 11,
+      "contraOrderId": 2,
+      "priceTicks": 1002,
+      "quantity": 157,
+      "aggressorSide": "BUY"
+    }
+  ],
+  "state": {
+    "expression": "expr_crying_face",
+    "reference": 1000.876118,
+    "market": 1001,
+    "basisPercent": 0.000124,
+    "prevalenceDocuments": 10,
+    "creationFlow": 10,
+    "likeFlow": 800,
+    "repostFlow": 400,
+    "quoteFlow": 200,
+    "replyFlow": 260,
+    "amplification": 343.049288,
+    "propagation": 60,
+    "cascadeHhi": 1,
+    "effectiveCascades": 1,
+    "breadth": 10,
+    "dataLiquidityTier": "TIER_3_INTRADAY"
+  },
+  "microstructure": {
+    "bid": 1000,
+    "ask": 1002,
+    "midpoint": 1001,
+    "spreadTicks": 2,
+    "microprice": 1001.085187,
+    "imbalanceL1": 0.085187,
+    "imbalanceL5": 0,
+    "tradeImbalance": 1,
+    "ofi": 157,
+    "depth": [
+      {
+        "side": "BID",
+        "priceTicks": 1000,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1002,
+        "quantity": 843
+      },
+      {
+        "side": "BID",
+        "priceTicks": 999,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1003,
+        "quantity": 1000
+      },
+      {
+        "side": "BID",
+        "priceTicks": 998,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1004,
+        "quantity": 1000
+      },
+      {
+        "side": "BID",
+        "priceTicks": 997,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1005,
+        "quantity": 1000
+      },
+      {
+        "side": "BID",
+        "priceTicks": 996,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1006,
+        "quantity": 1000
+      }
+    ]
+  },
+  "risk": {
+    "state": "NORMAL",
+    "killed": false,
+    "grossExposure": 157157,
+    "netExposure": 157157,
+    "leverage": 0.015716,
+    "marginUtilization": 0.004715
+  },
+  "heatmaps": {
+    "depth": {
+      "x": [
+        "1000",
+        "1002",
+        "999",
+        "1003",
+        "998",
+        "1004",
+        "997",
+        "1005",
+        "996",
+        "1006"
+      ],
+      "y": [
+        "quantity"
+      ],
+      "values": [
+        [
+          1000,
+          843,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "units": "lots",
+      "timestamp": "10005000000",
+      "methodology": "CULT-X-1"
+    },
+    "signals": {
+      "x": [
+        "PREV",
+        "AMP",
+        "PROP",
+        "CONC"
+      ],
+      "y": [
+        "CRY"
+      ],
+      "values": [
+        [
+          10,
+          343.04928837687714,
+          60,
+          1
+        ]
+      ],
+      "units": "mixed; see signal dictionary",
+      "timestamp": "10005000000",
+      "methodology": "CULT-BEHAVIOR-1"
+    }
+  }
+}

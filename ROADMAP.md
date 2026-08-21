@@ -16,39 +16,43 @@ Authorized Jetstream adapter, pinned 30-emoji Unicode 17.0 registry, minute aggr
 
 Official close finalization, calibration-gated content/language standardization, Wilson and deterministic moving-block intervals, explicit quality vectors, seasonality baselines, and signal/noise diagnostics are implemented. Remaining: operate against 7–30 days of durable data, schedule finalization, and validate thresholds/benchmarks empirically.
 
-## Phase 3 — Quantitative research engine — ACTIVE
+## Phase 3 — Quantitative research engine — WORKING VERTICAL SLICE
 
 Research primitives now cover broad market internals, EWMA/momentum/volatility, factor residuals, pair and event diagnostics, HAC-compatible Python research, PCA, IC/quantiles, multiple-testing correction, purged walk-forward splits, tail risk, explicit costs, delayed C++ execution, virtual liquidity/margin, immutable Parquet snapshots, and guarded report generation. Remaining: collect sufficient history, produce registered experiment outputs, add full ADF/PCA/lead-lag batch orchestration, and publish Report 001 only when eligible.
 
-## Phase 3.5 — Cross-platform panel
+## Phase 4 — Expression event tape and deterministic exchange laboratory — WORKING VERTICAL SLICE
 
-Add permitted Mastodon and stratified YouTube samples, publish fixed panel weights, missing-source behavior, effective sample sizes, block bootstrap intervals, and external benchmark validation. Reddit waits for authorized access.
+Three independent tapes, engagement/cascade diagnostics, data-liquidity study primitives, deterministic nanosecond scheduler, integer L3 CULT-X book, exact queue position, core order types/STP, latency, microstructure, risk/halts, strategy/execution SDK, native scenarios, property tests, benchmark suite, replay hashes, PostgreSQL contracts, privacy-safe Bluesky engagement linkage, and read-only Quant APIs are implemented. Remaining validation: durable 72-hour/7-day live-shadow campaign, real signal-range study, event-tape PostgreSQL repository activation, authenticated WebSocket transport, complete agent ecology/markout series, and empirical threshold calibration.
 
-## Phase 4 — Semantic classification
+## Phase 4.5 — PRODUCT FREEZE / FRONTEND — NEXT
 
-Versioned, calibrated context classifiers; uncertainty; semantic drift; strict objective-oracle isolation.
+No new major backend concepts. Focus on onboarding, simple expression cards/charts, BUY/SHORT, portfolio, indexes, leaderboard, mobile/accessibility, then carefully expose Analyst and Quant data without compromising five-second comprehension.
 
-## Phase 5 — Expressions beyond emoji
+## Phase 5 — Cross-platform panel and semantic research
+
+Add permitted Mastodon and stratified YouTube samples after Bluesky is statistically characterized; publish fixed panel weights, missing-source behavior, effective sample sizes, block-bootstrap intervals, and external validation. Separately research versioned, calibrated context classifiers, uncertainty, semantic drift, and strict objective-oracle isolation. Reddit waits for authorized access.
+
+## Phase 6 — Expressions beyond emoji
 
 Explicit phrase/alias methodologies, language-aware eligibility, acronyms and emoticons.
 
-## Phase 6 — User-created cultural indexes
+## Phase 7 — User-created cultural indexes
 
 Versioned eligibility, selection, caps, immutable rebalance histories, creator/read-only publication, and methodology classification.
 
-## Phase 7 — Advanced quant terminal
+## Phase 8 — Advanced quant terminal
 
 Data-quality history, event studies, sparse relationships at larger universes, factor/regime research, and export controls.
 
-## Phase 8 — Strategy ecosystem
+## Phase 9 — Strategy ecosystem
 
 Native strategy SDK, reproducible data views, larger backtest jobs, and research-grade diagnostics.
 
-## Phase 9 — Research and reputation
+## Phase 10 — Research and reputation
 
 Publishing and transparent simulated track records without real-money rewards.
 
-## Phase 10 — API/data product
+## Phase 11 — API/data product
 
 Versioned aggregate/reference exports and documented API access subject to source terms and privacy policy.
 

@@ -23,6 +23,25 @@ export interface ParsedDocument {
   eligible: boolean;
   matches: EmojiMatch[];
 }
+export type BehaviorEventType =
+  | "CREATE"
+  | "LIKE"
+  | "REPOST"
+  | "REPLY"
+  | "QUOTE"
+  | "DELETE";
+export interface ParsedBehaviorEvent {
+  eventId: string;
+  cursor: number;
+  eventAtMs: number;
+  receivedAtMs: number;
+  actorId: string;
+  expressionIds: string[];
+  type: BehaviorEventType;
+  cascadeUri: string;
+  parentCascadeUri?: string;
+  recordUri: string;
+}
 export interface SourceHealth {
   source: "BLUESKY";
   state: HealthState;

@@ -27,4 +27,41 @@ Every signal is derived and carries `CULT-RESEARCH-1` unless stated otherwise. M
 | HHI / NEFF   | sum shares squared / reciprocal                       | 1                                    | Attention concentration                            |
 | ENTROPY      | normalized Shannon expression-share entropy           | 2                                    | Diversity, not semantic entropy                    |
 
+## Phase 4 expression-behavior signals (`CULT-BEHAVIOR-1`)
+
+| Code                         | Formula / units                              | Interpretation and limitations                  |
+| ---------------------------- | -------------------------------------------- | ----------------------------------------------- |
+| PREVALENCE                   | document-presence count / eligible documents | Direct use only; engagement never increments it |
+| CREATION_FLOW                | eligible expression-bearing creates / window | Component event flow                            |
+| LIKE/REPOST/QUOTE/REPLY_FLOW | incremental events / window                  | Components remain separate                      |
+| AMPLIFICATION                | decayed weighted `log1p` engagement          | Experimental weights and half-life              |
+| PROPAGATION                  | `(reposts+quotes)/max(creates,1)`            | Horizon must accompany value                    |
+| CASCADE_HHI                  | sum squared cascade attention shares         | Concentration, not bot classification           |
+| CASCADE_EFFECTIVE_N          | reciprocal cascade HHI                       | Effective active cascades                       |
+| EVENT_INTENSITY              | arrivals / unit time                         | Clock and event class required                  |
+| FANO                         | count variance / count mean                  | Overdispersion diagnostic                       |
+| BURSTINESS                   | `(sd(interarrival)-mean)/(sd+mean)`          | Bounded clustering descriptor                   |
+| ATTENTION_BLOCK              | versioned extreme behavior rule              | Information event; never an order               |
+
+## Phase 4 microstructure signals (`CULT-MICROSTRUCTURE-1`)
+
+| Code              | Formula / units                              | Interpretation and limitations            |
+| ----------------- | -------------------------------------------- | ----------------------------------------- |
+| MID               | `(bid+ask)/2`, ticks                         | Simulated venue midpoint                  |
+| SPREAD            | `ask-bid`, ticks/bps                         | Visible top-of-book cost                  |
+| MICROPRICE        | `(ask*B+bid*A)/(A+B)`, ticks                 | L1 size-weighted price; N/A at zero depth |
+| IMBALANCE_L1/L5   | `(bid depth-ask depth)/total`                | Visible depth skew                        |
+| OFI               | explicit best-price/size-change contribution | Not trade imbalance and not engagement    |
+| TRADE_IMBALANCE   | `(aggressive buys-sells)/total`              | Aggressor side known exactly              |
+| DEPTH             | visible quantity by price                    | Simulation liquidity only                 |
+| QUEUE_AHEAD       | resting quantity ahead at price              | Exact because CULT-X owns L3              |
+| FILL_RATE         | filled/submitted quantity                    | Order/parent scope required               |
+| QUOTE_LIFETIME    | cancel-or-fill minus accept time             | Logical nanoseconds                       |
+| MARKOUT           | side-adjusted future mid minus fill          | Horizon required                          |
+| ADVERSE_SELECTION | negative passive-fill markout aggregate      | Horizon required                          |
+| EFFECTIVE_SPREAD  | `2D(fill-mid_t)`                             | Ticks                                     |
+| REALIZED_SPREAD   | `2D(fill-mid_t+Δ)`                           | Ticks and horizon                         |
+| PRICE_IMPACT      | `2D(mid_t+Δ-mid_t)`                          | Ticks and horizon                         |
+| BASIS / BASIS_Z   | market-reference / standardized history      | Simulated dislocation; not futures basis  |
+
 Leakage controls: signals computed at close execute no earlier than the next configured bar. Overlapping labels require purging/embargo. Current-universe membership must not be retrojected.

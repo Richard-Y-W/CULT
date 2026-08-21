@@ -6,12 +6,12 @@ CULT is a simulated market for emoji, emoticons, acronyms, slang, and reaction p
 
 ## Exact current state
 
-| Classification      | Available now                                                                                                                                                                                                                                                                                                                                    |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **LIVE**            | Authorized public Bluesky Jetstream collector; 30-emoji Unicode 17.0 registry; aggregate-only one-minute content/language strata; source lag/health and author concentration; calibration-gated standardization and official-close commands. Requires `CULT_DATA_MODE=live` and PostgreSQL.                                                      |
-| **SYNTHETIC**       | Default deterministic 365-day product; Casual trading, reference/market charts, portfolio, leaderboard, curated indexes, semantic/platform decomposition, pair analysis, and momentum backtest.                                                                                                                                                  |
-| **EXPERIMENTAL**    | Phase 3 research engine: standardization, Wilson/block-bootstrap uncertainty, seasonality, signal/noise, EWMA, market factors, residual/pair/event/IC diagnostics, walk-forward splits, index weighting, portfolio tails/costs, delayed C++ backtests, virtual liquidity/margin, immutable Parquet snapshots, and guarded Report 001 generation. |
-| **NOT IMPLEMENTED** | A completed 7+ day empirical dataset/report, cross-platform index, production PCA/ADF scheduling, semantic classifier, production identity/billing, full PostgreSQL trading repositories, real money, or derivatives.                                                                                                                            |
+| Classification      | Available now                                                                                                                                                                                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **LIVE**            | Authorized public Bluesky Jetstream shadow collector; 30-emoji Unicode 17.0 registry; one-minute content/language strata; privacy-safe post/like/repost cascade linkage; source lag/health and author concentration. Requires `CULT_DATA_MODE=live-shadow` and PostgreSQL. Live-market is gated off. |
+| **SYNTHETIC**       | Default deterministic 365-day product; Casual trading, reference/market charts, portfolio, leaderboard, curated indexes, semantic/platform decomposition, pair analysis, and momentum backtest.                                                                                                      |
+| **EXPERIMENTAL**    | Phase 3 research engine plus Phase 4 expression/signal/market tapes, behavior/cascade diagnostics, deterministic C++ nanosecond clock, L3 price-time-priority CULT-X book, queue/latency/risk/microstructure primitives, local strategy SDK, scenario replay, Quant data APIs, and Parquet export.   |
+| **NOT IMPLEMENTED** | A completed 7+ day empirical dataset/report, validated live-market operation, production WebSocket transport, hosted untrusted strategies, cross-platform index, semantic classifier, production identity/billing, full PostgreSQL trading repositories, real money, or derivatives.                 |
 
 Empirical Phase 2 output is explicitly **COIP coverage: 1 source / PROVISIONAL**. Semantic inference never enters the reference count.
 
@@ -48,12 +48,25 @@ npm run close:official -- 2026-09-01
 `npm run worker` consumes the recorded fixture in default synthetic mode. Live collection is explicit:
 
 ```bash
-CULT_DATA_MODE=live DATABASE_URL=postgresql://cult:cult@localhost:5432/cult npm run worker
+CULT_DATA_MODE=live-shadow DATABASE_URL=postgresql://cult:cult@localhost:5432/cult npm run worker
 ```
 
 `npm run smoke:live` optionally validates one public Jetstream event without persistence or printing its text/actor identifier. It is manual and never part of CI.
 
-The live worker stores aggregate observations, watermarks, and health—not handles, profiles, DIDs, or post bodies.
+The live worker stores aggregate observations, watermarks, health, and an optional opaque-ID behavior tape—not handles, profiles, DIDs, AT URIs, or post bodies.
+
+## Phase 4 deterministic exchange lab
+
+```bash
+npm run hft:demo
+npm run replay:hft -- data/synthetic/phase4/great-cry.json
+cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
+cmake --build build/cpp
+build/cpp/cult_hft_demo great-cry 20260821
+build/cpp/cult_hft_benchmarks 1000000
+```
+
+The three generated scenarios separate expression, signal, and market tapes and write a synthetic research report. `CULT-X` uses integer ticks/quantities, exact price-time priority, partial fills, queue position, STP, IOC/FOK/post-only, snapshots, deterministic replay, latency models, pre-trade risk, halts, and reopening-price selection. It is a research simulator—not a real exchange.
 
 ## C++ quant core
 

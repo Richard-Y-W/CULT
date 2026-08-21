@@ -28,7 +28,10 @@
     "smoke:live": "tsx scripts/bluesky-live-smoke.ts",
     "replay": "tsx scripts/replay.ts",
     "calibrate:standardization": "tsx scripts/calibrate-standardization.ts",
-    "close:official": "tsx scripts/finalize-official-close.ts"
+    "close:official": "tsx scripts/finalize-official-close.ts",
+    "hft:demo": "tsx scripts/run-hft-demo.ts",
+    "hft:sufficiency": "tsx scripts/market-data-sufficiency.ts",
+    "replay:hft": "tsx scripts/replay-hft.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.34.0",

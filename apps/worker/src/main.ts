@@ -3,8 +3,10 @@ import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import WebSocket from "ws";
 import { EmojiRegistry, type EmojiRegistryData } from "@cult/expression-engine";
+import { resolveDataMode } from "@cult/hft-engine";
 import { BlueskyEventParser } from "./parser.js";
 import { MinuteAggregator } from "./aggregator.js";
+import { BehaviorTapeWriter } from "./behavior-tape.js";
 import {
   CompositeSink,
   PostgresAggregateSink,
@@ -16,7 +18,8 @@ import type { SourceHealth } from "./types.js";
 
 const repoRoot = fileURLToPath(new URL("../../../", import.meta.url)),
   fromRoot = (path: string) => resolve(repoRoot, path);
-const mode = process.env.CULT_DATA_MODE ?? "synthetic";
+const mode = resolveDataMode(process.env),
+  liveSource = mode === "live-shadow" || mode === "live-market";
 const registryData = JSON.parse(
   await readFile(
     fromRoot("data/reference/unicode/cult-emoji-registry-v1.json"),
@@ -28,6 +31,14 @@ const registry = new EmojiRegistry(registryData),
   aggregator = new MinuteAggregator(
     registryData.assets.map((asset) => asset.id),
   );
+const behaviorWriter = liveSource
+  ? new BehaviorTapeWriter(
+      fromRoot(
+        process.env.CULT_BEHAVIOR_TAPE_PATH ??
+          `data/replays/expression-events/${new Date().toISOString().slice(0, 10)}.jsonl`,
+      ),
+    )
+  : null;
 const health: SourceHealth = {
   source: "BLUESKY",
   state: "DISCONNECTED",
@@ -49,10 +60,10 @@ const replayPath = fromRoot(
   process.env.CULT_REPLAY_PATH ??
     `data/replays/bluesky/${new Date().toISOString().slice(0, 10)}.jsonl`,
 );
-if (mode === "live") {
+if (liveSource) {
   if (!process.env.DATABASE_URL)
     throw new Error(
-      "CULT_DATA_MODE=live requires DATABASE_URL; live aggregates must be durable",
+      `${mode} requires DATABASE_URL; live aggregates must be durable`,
     );
   const postgres = new PostgresAggregateSink(process.env.DATABASE_URL);
   await postgres.connect();
@@ -87,6 +98,7 @@ async function processMessage(raw: string, receivedAt = Date.now()) {
     health.duplicateEvents++;
     return;
   }
+  if (behaviorWriter) await behaviorWriter.write(result.behaviorEvents);
   const document = result.document;
   if (!document) return;
   health.lastEventTimestampMs = document.eventAtMs;
@@ -127,7 +139,13 @@ async function live() {
       )
         .then((text) => (JSON.parse(text) as { cursor: number }).cursor)
         .catch(() => undefined),
-      query = new URLSearchParams({ wantedCollections: "app.bsky.feed.post" });
+      query = new URLSearchParams();
+    for (const collection of [
+      "app.bsky.feed.post",
+      "app.bsky.feed.like",
+      "app.bsky.feed.repost",
+    ])
+      query.append("wantedCollections", collection);
     if (cursor) query.set("cursor", String(Math.max(0, cursor - 5_000_000)));
     const url = `${process.env.BLUESKY_JETSTREAM_URL ?? "wss://jetstream2.us-east.bsky.network/subscribe"}?${query}`,
       socket = new WebSocket(url, { maxPayload: 1_000_000 });
@@ -185,6 +203,6 @@ const shutdown = () => {
 };
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
-if (mode === "live") await live();
+if (liveSource) await live();
 else await synthetic();
 clearInterval(healthTimer);
