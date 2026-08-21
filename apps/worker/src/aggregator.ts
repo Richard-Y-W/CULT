@@ -20,14 +20,31 @@ interface BucketState {
   eligible: number;
   expressions: Map<string, ExpressionState>;
 }
+const languageBucket = (langs: string[]) => {
+  const candidate = langs[0]?.trim().toLowerCase();
+  if (!candidate || !/^[a-z]{2,3}(?:-[a-z0-9]{2,8})*$/.test(candidate))
+    return "und";
+  return candidate.split("-")[0]!;
+};
+const percentile = (values: number[], probability: number) => {
+  if (!values.length) return null;
+  const sorted = [...values].sort((a, b) => a - b);
+  return sorted[
+    Math.min(sorted.length - 1, Math.floor(probability * sorted.length))
+  ]!;
+};
 export class MinuteAggregator {
   private windowStart: number | null = null;
   private cursor = 0;
   private key = randomBytes(32);
-  private buckets = new Map<EligibleBucket, BucketState>();
+  private buckets = new Map<string, BucketState>();
+  private lags: number[] = [];
   constructor(private readonly registryIds: string[]) {
     for (const bucket of ["ORIGINAL", "REPLY", "QUOTE"] as EligibleBucket[])
-      this.buckets.set(bucket, { eligible: 0, expressions: new Map() });
+      this.buckets.set(`${bucket}|ALL`, {
+        eligible: 0,
+        expressions: new Map(),
+      });
   }
   add(document: ParsedDocument) {
     if (
@@ -43,21 +60,29 @@ export class MinuteAggregator {
         "Document belongs to a different minute; flush the current window first",
       );
     this.cursor = Math.max(this.cursor, document.cursor);
-    const state = this.buckets.get(document.bucket)!;
-    state.eligible++;
+    this.lags.push(Math.max(0, document.receivedAtMs - document.eventAtMs));
     const actor = createHmac("sha256", this.key)
       .update(document.actorId)
       .digest("hex");
-    for (const match of document.matches) {
-      const expression = state.expressions.get(match.expressionId) ?? {
-        documents: 0,
-        occurrences: 0,
-        authors: new Map(),
-      };
-      expression.documents++;
-      expression.occurrences += match.occurrences;
-      expression.authors.set(actor, (expression.authors.get(actor) ?? 0) + 1);
-      state.expressions.set(match.expressionId, expression);
+    for (const language of ["ALL", languageBucket(document.langs)]) {
+      const key = `${document.bucket}|${language}`,
+        state = this.buckets.get(key) ?? {
+          eligible: 0,
+          expressions: new Map(),
+        };
+      state.eligible++;
+      for (const match of document.matches) {
+        const expression = state.expressions.get(match.expressionId) ?? {
+          documents: 0,
+          occurrences: 0,
+          authors: new Map(),
+        };
+        expression.documents++;
+        expression.occurrences += match.occurrences;
+        expression.authors.set(actor, (expression.authors.get(actor) ?? 0) + 1);
+        state.expressions.set(match.expressionId, expression);
+      }
+      this.buckets.set(key, state);
     }
   }
   currentWindowStart() {
@@ -67,7 +92,8 @@ export class MinuteAggregator {
     if (this.windowStart === null) return null;
     const end = this.windowStart + 60_000,
       observations: AggregateObservation[] = [];
-    for (const [bucket, state] of this.buckets)
+    for (const [stratum, state] of this.buckets) {
+      const [bucket, language] = stratum.split("|") as [EligibleBucket, string];
       for (const expressionId of this.registryIds) {
         const expression = state.expressions.get(expressionId),
           prevalence = jeffreysPrevalence(
@@ -81,34 +107,56 @@ export class MinuteAggregator {
           expressionId,
           platform: "Bluesky",
           contentBucket: bucket,
+          languageBucket: language,
           windowStart: new Date(this.windowStart).toISOString(),
           windowEnd: new Date(end).toISOString(),
           eligibleDocuments: state.eligible,
           expressionDocuments: expression?.documents ?? 0,
           occurrenceCount: expression?.occurrences ?? 0,
+          intensityWhenPresent: expression?.documents
+            ? expression.occurrences / expression.documents
+            : 0,
           uniqueAuthorEstimate: concentration.uniqueAuthors,
           rawPrevalence: prevalence.rawPerMillion,
           smoothedPrevalence: prevalence.smoothedPerMillion,
           largestAuthorShare: concentration.largestAuthorShare,
           topTenAuthorShare: concentration.topTenAuthorShare,
           effectiveAuthors: concentration.effectiveAuthors,
+          authorHhi:
+            concentration.effectiveAuthors > 0
+              ? 1 / concentration.effectiveAuthors
+              : 0,
+          documentsPerEffectiveAuthor:
+            concentration.effectiveAuthors > 0
+              ? concentration.documents / concentration.effectiveAuthors
+              : 0,
+          arrivalMode: health.state === "BACKFILLING" ? "BACKFILLED" : "LIVE",
           sourceHealth: health.state,
-          methodologyVersion: "COIP-1",
+          methodologyVersion: "COIP-1.1",
           sourceVersion: "BLUESKY-JETSTREAM-1",
           expressionRegistryVersion: "EMOJI-17.0-CULT-V1",
         });
       }
+    }
+    const batchHealth = {
+      ...health,
+      lagP50Ms: percentile(this.lags, 0.5),
+      lagP95Ms: percentile(this.lags, 0.95),
+      lagP99Ms: percentile(this.lags, 0.99),
+    };
     const batch = {
       source: "BLUESKY" as const,
       windowStart: new Date(this.windowStart).toISOString(),
       windowEnd: new Date(end).toISOString(),
       cursor: this.cursor,
-      health,
+      observedAt: new Date().toISOString(),
+      health: batchHealth,
       observations,
     };
     this.windowStart = null;
     this.cursor = 0;
     this.key = randomBytes(32);
+    this.lags = [];
     for (const state of this.buckets.values()) {
       state.eligible = 0;
       state.expressions.clear();

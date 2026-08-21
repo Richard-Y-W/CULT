@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { SimulatedMarket } from "@cult/market-engine";
+import {
+  evaluateRisk,
+  SimulatedMarket,
+  VirtualLiquidityProvider,
+} from "@cult/market-engine";
 describe("market accounting", () => {
   it("buys, sells, marks P&L, charges fees, and balances its cash ledger", () => {
     const m = new SimulatedMarket(1_000_000n, { cry: 100 }, 0.001);
@@ -52,5 +56,46 @@ describe("market accounting", () => {
         quantity: 1,
       }),
     ).toThrow("Insufficient long");
+  });
+});
+
+describe("virtual liquidity and margin", () => {
+  it("mean reverts premium and responds to order flow deterministically", () => {
+    const maker = new VirtualLiquidityProvider({
+      meanReversion: 0.2,
+      orderFlowImpact: 0.1,
+      shockVolatility: 0,
+      baseHalfSpread: 0.001,
+      volatilitySpread: 0.01,
+      illiquiditySpread: 0.1,
+      dataRiskSpread: 0.01,
+      inventorySkew: 0,
+    });
+    const state = {
+      reference: 100,
+      logPremium: 0.1,
+      referenceVolatility: 0.2,
+      dataQuality: 0.9,
+      virtualLiquidity: 10_000,
+      inventory: 0,
+    };
+    expect(maker.update(state, 0, 0).logPremium).toBeCloseTo(0.08);
+    expect(maker.update(state, 100, 0).logPremium).toBeCloseTo(0.18);
+    expect(maker.impact(100, 10_000)).toBeCloseTo(0.01);
+  });
+  it("keeps margin states distinct", () => {
+    const policy = {
+      initialMargin: 0.5,
+      maintenanceMargin: 0.25,
+      maximumGrossLeverage: 2,
+      maximumNetLeverage: 1.5,
+      concentrationLimit: 1,
+      liquidationEquity: 100,
+    };
+    expect(evaluateRisk(1000, 1000, 500, 500, policy)).toBe("OK");
+    expect(evaluateRisk(1000, 2500, 500, 500, policy)).toBe("MARGIN_CALL");
+    expect(evaluateRisk(200, 1000, 0, 100, policy)).toBe("FORCED_DELEVERAGING");
+    expect(evaluateRisk(50, 1000, 0, 100, policy)).toBe("LIQUIDATION");
+    expect(evaluateRisk(0, 0, 0, 0, policy)).toBe("BANKRUPTCY");
   });
 });

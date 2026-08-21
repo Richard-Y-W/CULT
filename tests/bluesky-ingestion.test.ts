@@ -22,6 +22,9 @@ const registryData = JSON.parse(
     parseErrors: 1,
     duplicateEvents: 1,
     reconnectCount: 0,
+    lagP50Ms: null,
+    lagP95Ms: null,
+    lagP99Ms: null,
   };
 describe("Bluesky aggregate-first ingestion", () => {
   it("classifies original, reply, quote and pure repost eligibility", () => {
@@ -48,19 +51,34 @@ describe("Bluesky aggregate-first ingestion", () => {
     }
     const batch = aggregator.flush(health)!;
     const joy = batch.observations.find(
-      (x) => x.expressionId === "expr_joy" && x.contentBucket === "ORIGINAL",
+      (x) =>
+        x.expressionId === "expr_joy" &&
+        x.contentBucket === "ORIGINAL" &&
+        x.languageBucket === "ALL",
     )!;
     expect(joy.eligibleDocuments).toBe(5);
     expect(joy.expressionDocuments).toBe(2);
     expect(joy.occurrenceCount).toBe(6);
+    expect(joy.intensityWhenPresent).toBe(3);
     expect(joy.uniqueAuthorEstimate).toBe(2);
     expect(joy.rawPrevalence).toBe(400000);
     expect(joy.sourceVersion).toBe("BLUESKY-JETSTREAM-1");
     const pray = batch.observations.find(
-      (x) => x.expressionId === "expr_pray" && x.contentBucket === "REPLY",
+      (x) =>
+        x.expressionId === "expr_pray" &&
+        x.contentBucket === "REPLY" &&
+        x.languageBucket === "ALL",
     )!;
     expect(pray.expressionDocuments).toBe(1);
     expect(pray.largestAuthorShare).toBe(1);
+    expect(pray.authorHhi).toBe(1);
+    expect(batch.observations.some((x) => x.languageBucket === "en")).toBe(
+      true,
+    );
+    expect(batch.observations.some((x) => x.languageBucket === "und")).toBe(
+      true,
+    );
+    expect(batch.health.lagP95Ms).toBeTypeOf("number");
   });
   it("never exposes actor identifiers or raw text in persisted aggregate shape", () => {
     const parser = new BlueskyEventParser(new EmojiRegistry(registryData)),

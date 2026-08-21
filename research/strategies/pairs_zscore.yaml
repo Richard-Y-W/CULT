@@ -1,0 +1,22 @@
+schema_version: CULT-STRATEGY-1
+name: pairs_zscore
+dataset: CULT-BSKY-PENDING
+universe: emoji_v1_static_research
+signal:
+  type: cointegrating_spread_zscore
+  formation: 30d
+  enter: 2.0
+  exit: 0.5
+  stop: 4.0
+portfolio:
+  gross_exposure: 1.0
+  hedge_ratio: formation_regression
+execution:
+  timing: next_bar
+  delay: 5m
+  commission_bps: 5
+  half_spread_bps: 10
+  impact_model: sqrt_virtual_liquidity
+validation:
+  type: walk_forward
+  multiple_testing: benjamini_hochberg

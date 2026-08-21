@@ -12,6 +12,14 @@ import {
   zScore,
 } from "@cult/analytics";
 import { jeffreysPrevalence, phase2Signals } from "@cult/expression-engine";
+import {
+  autocorrelation,
+  marketFactors,
+  realizedVolatility,
+  robustZScore,
+  spearman,
+  wilsonInterval,
+} from "@cult/research-engine";
 
 const candidates = ["build/cpp/cult_golden.exe", "build/cpp/cult_golden"];
 const executable = candidates
@@ -41,17 +49,28 @@ const signals = phase2Signals(
   [0.1, 0.2, -0.1],
   0.03,
 );
+const factors = marketFactors([0.1, -0.05, 0.02], [2, 1, 1]),
+  interval = wilsonInterval(10, 100);
 const expected: Record<string, number> = {
   momentum: momentum(values, 3),
   volatility: volatility(a),
   covariance: covariance(a, b),
   correlation: correlation(a, b),
+  spearman: spearman(a, b),
   beta: beta(a, b),
   drawdown: drawdown(values).max,
   zscore: zScore(130, values),
+  robust_zscore: robustZScore(130, values),
   entropy: normalizedEntropy(entropy),
+  realized_volatility: realizedVolatility(a),
+  autocorrelation: autocorrelation(values, 1),
+  market_return: factors.marketReturn,
+  dispersion: factors.dispersion,
+  market_breadth: factors.breadth,
   raw_prevalence: prevalence.rawPerMillion,
   smoothed_probability: prevalence.smoothedProbability,
+  wilson_lower: interval.lower,
+  wilson_upper: interval.upper,
   velocity: signals.velocity,
   acceleration: signals.acceleration,
   breadth: signals.breadth,

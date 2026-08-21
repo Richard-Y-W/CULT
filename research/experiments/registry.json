@@ -1,0 +1,61 @@
+{
+  "registry_version": "CULT-EXPERIMENTS-1",
+  "experiments": [
+    {
+      "id": "01_data_quality",
+      "question": "Is coverage adequate and are observations concentrated among authors?"
+    },
+    {
+      "id": "02_prevalence_distribution",
+      "question": "How is document-presence prevalence distributed?"
+    },
+    {
+      "id": "03_intraday_seasonality",
+      "question": "Does prevalence exhibit hour-of-week seasonality?"
+    },
+    {
+      "id": "04_return_distribution",
+      "question": "What is the empirical distribution of log prevalence returns?"
+    },
+    {
+      "id": "05_autocorrelation",
+      "question": "Do returns exhibit serial dependence?"
+    },
+    {
+      "id": "06_volatility_clustering",
+      "question": "Do squared or absolute returns exhibit serial dependence?"
+    },
+    {
+      "id": "07_correlation_matrix",
+      "question": "Which expression relationships persist across windows?"
+    },
+    {
+      "id": "08_pca",
+      "question": "How much standardized cross-sectional variation does PC1 explain?"
+    },
+    {
+      "id": "09_pair_tests",
+      "question": "Do plausible expression pairs exhibit stable relative value?"
+    },
+    {
+      "id": "10_momentum",
+      "question": "Does trailing momentum predict forward relative returns out of sample?"
+    },
+    {
+      "id": "11_reversal",
+      "question": "Do extreme short-horizon moves reverse out of sample?"
+    },
+    {
+      "id": "12_event_studies",
+      "question": "How do expressions respond around registered external events?"
+    },
+    {
+      "id": "13_composition_bias",
+      "question": "How much movement is caused by content/language composition?"
+    },
+    {
+      "id": "14_market_reference_premium",
+      "question": "Does simulated premium forecast future reference changes?"
+    }
+  ]
+}

@@ -7,10 +7,13 @@ name = "cult-research"
 version = "0.2.0"
 description = "Reproducible research tools for CULT expression measurements"
 requires-python = ">=3.11"
-dependencies = ["numpy>=2.0", "pandas>=2.2", "pyarrow>=17"]
+dependencies = ["numpy>=2.0", "pandas>=2.2", "pyarrow>=17", "scipy>=1.14", "statsmodels>=0.14", "scikit-learn>=1.5", "psycopg[binary]>=3.2"]
 
 [project.optional-dependencies]
 plots = ["matplotlib>=3.9"]
+
+[project.scripts]
+cult-snapshot = "cult_research.snapshot_cli:main"
 
 [tool.scikit-build]
 cmake.source-dir = "../cpp"

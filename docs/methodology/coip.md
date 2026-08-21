@@ -1,8 +1,8 @@
-# CULT Observable Internet Panel (COIP-1)
+# CULT Observable Internet Panel (COIP-1.1)
 
-COIP is a versioned sample of public online environments. It is not “the internet,” and CULT does not claim demographic representativeness. The Phase 2 empirical panel contains one source—public Bluesky textual posts observed through Jetstream—so every empirical index is labelled **PROVISIONAL: 1 SOURCE**.
+COIP is a versioned sample of public online environments. It is not “the internet,” and CULT does not claim demographic representativeness. The empirical panel contains one source—public Bluesky textual posts observed through Jetstream—so every empirical index is labelled **PROVISIONAL: 1 SOURCE**. Version 1.1 adds content and declared-language sufficient-statistic strata without changing document eligibility.
 
-## COIP-1 eligibility
+## COIP-1.1 eligibility
 
 An eligible document is a newly authored public `app.bsky.feed.post` record. Original posts, replies, and quote-post text are eligible and separately bucketed. Pure repost events are not new textual documents. Deleted records cannot retroactively become eligible. Collection uses UTC one-minute base windows, with deterministic 5-minute, hourly, and daily rollups planned from the base aggregates.
 
@@ -10,7 +10,7 @@ The denominator is eligible documents per source and content bucket. One documen
 
 ## Source and weighting policy
 
-COIP-1 assigns Bluesky an effective weight of 1 because it is the only live source. This is not a claim that Bluesky represents all public expression. Future sources require an explicit methodology version. Source weights will be published and will not depend on how many records CULT happened to collect.
+COIP-1.1 assigns Bluesky an effective weight of 1 because it is the only live source. This is not a claim that Bluesky represents all public expression. Future sources require an explicit methodology version. Source weights will be published and will not depend on how many records CULT happened to collect.
 
 ## Failure, missingness, and revisions
 

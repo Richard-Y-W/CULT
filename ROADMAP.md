@@ -4,7 +4,7 @@
 
 Working two-mode UI, deterministic expression panel, reference/market separation, fake-currency execution, portfolio marks, indexes, analytics, pairs, backtest, PostgreSQL contract, and methodology docs. Next: persist API transactions, finish production authentication, add full SELL/COVER UI, and visual/accessibility QA.
 
-## Phase 1.5 — C++ core migration and parity — ACTIVE
+## Phase 1.5 — C++ core migration and parity — WORKING VERTICAL SLICE
 
 C++20 modular compute core, native golden CLI, deterministic parity tests, hostile-Unicode tests, benchmarks, Node-API boundary, pybind11 surface, backtest V2, and virtual liquidity/risk primitives are implemented. Next: activate coarse native calls in the API after each endpoint gains parity and operational packaging.
 
@@ -12,11 +12,15 @@ C++20 modular compute core, native golden CLI, deterministic parity tests, hosti
 
 Authorized Jetstream adapter, pinned 30-emoji Unicode 17.0 registry, minute aggregation, privacy-conscious author concentration, PostgreSQL observation sink, checkpoint/health, deterministic replay, and Analyst reference/data panel are implemented. Remaining: run a durable collection campaign, finalize daily-close job, and migrate demo trading repositories to PostgreSQL.
 
-## Phase 2.5 — Reference/data-quality hardening
+## Phase 2.5 — Reference/data-quality hardening — WORKING VERTICAL SLICE
 
-Empirical history thresholds, official close finalization/revision operations, block-bootstrap intervals, data-quality calibration, seasonality baselines, anomaly feed, and benchmark validation against independent aggregate rankings.
+Official close finalization, calibration-gated content/language standardization, Wilson and deterministic moving-block intervals, explicit quality vectors, seasonality baselines, and signal/noise diagnostics are implemented. Remaining: operate against 7–30 days of durable data, schedule finalization, and validate thresholds/benchmarks empirically.
 
-## Phase 3 — Cross-platform panel
+## Phase 3 — Quantitative research engine — ACTIVE
+
+Research primitives now cover broad market internals, EWMA/momentum/volatility, factor residuals, pair and event diagnostics, HAC-compatible Python research, PCA, IC/quantiles, multiple-testing correction, purged walk-forward splits, tail risk, explicit costs, delayed C++ execution, virtual liquidity/margin, immutable Parquet snapshots, and guarded report generation. Remaining: collect sufficient history, produce registered experiment outputs, add full ADF/PCA/lead-lag batch orchestration, and publish Report 001 only when eligible.
+
+## Phase 3.5 — Cross-platform panel
 
 Add permitted Mastodon and stratified YouTube samples, publish fixed panel weights, missing-source behavior, effective sample sizes, block bootstrap intervals, and external benchmark validation. Reddit waits for authorized access.
 

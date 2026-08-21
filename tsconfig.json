@@ -1,8 +1,14 @@
 {
   "files": [],
   "references": [
-    { "path": "packages/shared" }, { "path": "packages/analytics" },
-    { "path": "packages/expression-engine" }, { "path": "packages/index-engine" },
-    { "path": "packages/market-engine" }, { "path": "apps/api" }, { "path": "apps/web" }, { "path": "apps/worker" }
+    { "path": "packages/shared" },
+    { "path": "packages/analytics" },
+    { "path": "packages/expression-engine" },
+    { "path": "packages/index-engine" },
+    { "path": "packages/market-engine" },
+    { "path": "packages/research-engine" },
+    { "path": "apps/api" },
+    { "path": "apps/web" },
+    { "path": "apps/worker" }
   ]
 }

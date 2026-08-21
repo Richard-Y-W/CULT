@@ -33,24 +33,32 @@ export interface SourceHealth {
   parseErrors: number;
   duplicateEvents: number;
   reconnectCount: number;
+  lagP50Ms: number | null;
+  lagP95Ms: number | null;
+  lagP99Ms: number | null;
 }
 export interface AggregateObservation {
   expressionId: string;
   platform: "Bluesky";
   contentBucket: Exclude<ContentBucket, "REPOST" | "INELIGIBLE">;
+  languageBucket: string;
   windowStart: string;
   windowEnd: string;
   eligibleDocuments: number;
   expressionDocuments: number;
   occurrenceCount: number;
+  intensityWhenPresent: number;
   uniqueAuthorEstimate: number;
   rawPrevalence: number;
   smoothedPrevalence: number;
   largestAuthorShare: number;
   topTenAuthorShare: number;
   effectiveAuthors: number;
+  authorHhi: number;
+  documentsPerEffectiveAuthor: number;
+  arrivalMode: "LIVE" | "BACKFILLED";
   sourceHealth: HealthState;
-  methodologyVersion: "COIP-1";
+  methodologyVersion: "COIP-1.1";
   sourceVersion: "BLUESKY-JETSTREAM-1";
   expressionRegistryVersion: "EMOJI-17.0-CULT-V1";
 }
@@ -59,6 +67,7 @@ export interface AggregateBatch {
   windowStart: string;
   windowEnd: string;
   cursor: number;
+  observedAt: string;
   health: SourceHealth;
   observations: AggregateObservation[];
 }

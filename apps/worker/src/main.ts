@@ -38,6 +38,9 @@ const health: SourceHealth = {
   parseErrors: 0,
   duplicateEvents: 0,
   reconnectCount: 0,
+  lagP50Ms: null,
+  lagP95Ms: null,
+  lagP99Ms: null,
 };
 let receivedThisMinute = 0,
   stopping = false,

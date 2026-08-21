@@ -6,12 +6,12 @@ CULT is a simulated market for emoji, emoticons, acronyms, slang, and reaction p
 
 ## Exact current state
 
-| Classification | Available now |
-|---|---|
-| **LIVE** | Authorized public Bluesky Jetstream collector; 30-emoji Unicode 17.0 registry; aggregate-only one-minute persistence/replay; source health, prevalence, author concentration, and provisional one-source reference inputs. Requires `CULT_DATA_MODE=live` and PostgreSQL. |
-| **SYNTHETIC** | Default deterministic 365-day product; Casual trading, reference/market charts, portfolio, leaderboard, curated indexes, semantic/platform decomposition, pair analysis, and momentum backtest. |
-| **EXPERIMENTAL** | C++20 streaming quant core, C++ backtester/risk/liquidity model, Node-API and pybind11 boundaries, data-quality components, PCA/lead-lag/market-factor research, and CEV realized expression volatility. |
-| **NOT IMPLEMENTED** | Cross-platform empirical index, real semantic classifier, finalized empirical daily closes, production identity/billing, full PostgreSQL trading repositories, real money, derivatives, or claims of representativeness. |
+| Classification      | Available now                                                                                                                                                                                                                                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **LIVE**            | Authorized public Bluesky Jetstream collector; 30-emoji Unicode 17.0 registry; aggregate-only one-minute content/language strata; source lag/health and author concentration; calibration-gated standardization and official-close commands. Requires `CULT_DATA_MODE=live` and PostgreSQL.                                                      |
+| **SYNTHETIC**       | Default deterministic 365-day product; Casual trading, reference/market charts, portfolio, leaderboard, curated indexes, semantic/platform decomposition, pair analysis, and momentum backtest.                                                                                                                                                  |
+| **EXPERIMENTAL**    | Phase 3 research engine: standardization, Wilson/block-bootstrap uncertainty, seasonality, signal/noise, EWMA, market factors, residual/pair/event/IC diagnostics, walk-forward splits, index weighting, portfolio tails/costs, delayed C++ backtests, virtual liquidity/margin, immutable Parquet snapshots, and guarded Report 001 generation. |
+| **NOT IMPLEMENTED** | A completed 7+ day empirical dataset/report, cross-platform index, production PCA/ADF scheduling, semantic classifier, production identity/billing, full PostgreSQL trading repositories, real money, or derivatives.                                                                                                                            |
 
 Empirical Phase 2 output is explicitly **COIP coverage: 1 source / PROVISIONAL**. Semantic inference never enters the reference count.
 
@@ -41,6 +41,8 @@ npm run generate:unicode
 npm run generate:synthetic
 npm run worker
 npm run replay -- data/replays/bluesky/2026-08-21.jsonl
+npm run calibrate:standardization -- CAL-2026-09 2026-08-01T00:00:00Z 2026-09-01T00:00:00Z
+npm run close:official -- 2026-09-01
 ```
 
 `npm run worker` consumes the recorded fixture in default synthetic mode. Live collection is explicit:
@@ -60,6 +62,7 @@ cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
 cmake --build build/cpp
 ctest --test-dir build/cpp --output-on-failure
 build/cpp/cult_benchmarks 1000000
+build/cpp/cult_benchmarks 1000000 100
 npm run test:differential
 ```
 
@@ -88,6 +91,6 @@ public events → validation → Unicode registry → window aggregates
 
 The market depends on the measurement system; the measurement system does not depend on the market. PostgreSQL is the live system of record, JSONL is aggregate replay, Parquet is the research interchange format, C++ is compute, Python is research, and TypeScript is product/API.
 
-Start with [COIP methodology](docs/methodology/coip.md), [system overview](docs/architecture/system-overview.md), [Phase 2 audit](docs/audits/phase2-starting-state.md), [known limitations](docs/KNOWN_LIMITATIONS.md), and [roadmap](ROADMAP.md).
+Start with [COIP methodology](docs/methodology/coip.md), [standardization](docs/methodology/standardization.md), [data dictionary](docs/data-dictionary.md), [signal dictionary](docs/research/signal-dictionary.md), [Phase 3 audit](docs/audits/phase3-starting-state.md), [known limitations](docs/KNOWN_LIMITATIONS.md), and [roadmap](ROADMAP.md).
 
 CULT currency has no cash value, redemption, transfer, prize, blockchain, or financial return.

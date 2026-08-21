@@ -64,3 +64,24 @@
 - Python research modules passed Python 3.13 bytecode compilation. Dependencies/native pybind11 module were not installed in this environment.
 - Docker Compose configuration validated, but Docker’s server daemon was unavailable; PostgreSQL migrations/seed and live collector persistence were therefore not executed locally. CI is configured to run migrations against PostgreSQL 16.
 - The sanitizer configuration compiled objects but could not link because this Strawberry GCC distribution lacks `libasan` and `libubsan`. Linux CI owns ASan/UBSan execution. No local Clang toolchain or Node development headers were present, so those toolchain/native-addon jobs are also not claimed as local passes.
+
+## 2026-08-21 — Phase 3 quantitative research vertical slice
+
+- Audited the Phase 2 baseline at `e45e324`; recorded verified behavior and gaps in `docs/audits/phase3-starting-state.md`.
+- Added language plus content strata, intensity, author HHI/effective-author diagnostics, arrival mode, lag percentiles, and provenance-bearing PostgreSQL V3 aggregates. API live reads now use V3.
+- Added calibration-gated standardization and official UTC close commands. Closes count-weight raw documents, reject incomplete days by default, chain-link from the prior close, and refuse overwrite of final history.
+- Added a typed research engine for Jeffreys/raw prevalence, Wilson intervals, deterministic block bootstrap, signal/noise, robust seasonality, EWMA, volatility/momentum, market breadth/dispersion/entropy/concentration, factor residuals, pairs, event studies, IC/quantiles, multiple-testing correction, purged walk-forward splits, portfolio tails/costs, and rigorous index weights/buffers.
+- Expanded C++ streaming analytics and differential parity to 25 metrics. Corrected C++ backtest timing to next-bar-by-default and added explicit commission/spread/impact/borrow/funding costs, VaR/ES, and drawdown duration.
+- Added a configurable virtual liquidity provider and distinct OK/margin-call/deleveraging/liquidation/bankruptcy states without changing the existing product execution path.
+- Added Python econometrics/factor/snapshot modules, immutable Parquet manifests, a 14-question experiment registry, structured daily summary, and Report 001 generator that withholds inference under seven days.
+- Added versioned methodology change control, standardization methodology, field/signal dictionaries, finance-analogy boundaries, and read-only research APIs.
+- Verification so far: 42/42 TypeScript tests, C++ 2/2, 25 differential metrics, TypeScript lint and typecheck passed. Final build/database/replay/benchmark/live checks follow in the final verification entry.
+
+## 2026-08-21 — Phase 3 final local verification
+
+- `npm run lint`, `npm run typecheck`, `npm test`, `npm run build`, `npm run test:differential`, and `npm audit --audit-level=moderate` passed. The final suite contains 44 TypeScript tests; differential parity covers 25 metrics; npm reported zero known vulnerabilities.
+- Release C++ rebuilt successfully and both CTest programs passed. Python and research scripts passed Python 3.13 bytecode compilation; Python research dependencies/native binding were not installed for runtime execution.
+- Synthetic generation reproduced 19 assets, 27,740 platform observations, and seven events. Fixture worker ingestion, deterministic aggregate replay, application health/web, BUY, SHORT, portfolio, and backtest smoke tests passed.
+- The privacy-safe live smoke parsed a current public Bluesky reply and retained neither text nor actor identifier. This connectivity check did not persist a production collection.
+- Measured dense rolling-pair benchmarks covered 30, 100, and 1,000 synthetic expressions. Exact timings and caveats are recorded in `docs/performance/README.md`; no memory/allocation result is invented.
+- Docker CLI was available but the Docker server daemon was not running. PostgreSQL migration `003_phase3_research_engine.sql`, calibration, and close commands were therefore not executed locally and are left to PostgreSQL CI verification.

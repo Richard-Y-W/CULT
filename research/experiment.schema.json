@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CULT experiment manifest",
+  "type": "object",
+  "required": [
+    "experiment_id",
+    "dataset_id",
+    "seed",
+    "parameters",
+    "limitations"
+  ],
+  "properties": {
+    "experiment_id": { "type": "string" },
+    "dataset_id": { "type": "string" },
+    "seed": { "type": "integer" },
+    "parameters": { "type": "object" },
+    "limitations": { "type": "array", "items": { "type": "string" } }
+  }
+}

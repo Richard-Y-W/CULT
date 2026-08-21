@@ -24,6 +24,12 @@ import {
 } from "@cult/analytics";
 import { z } from "zod";
 import pg from "pg";
+import {
+  marketFactors,
+  pairDiagnostics,
+  priceDiscoveryRegression,
+  spearman,
+} from "@cult/research-engine";
 const port = Number(process.env.PORT ?? 4100),
   data = generateSynthetic(),
   prices = Object.fromEntries(ASSETS.map((a) => [a.id, a.marketPrice])),
@@ -156,7 +162,7 @@ function syntheticReferenceMetrics(id: string) {
 async function liveReferenceMetrics(id: string) {
   if (!livePool) return null;
   const result = await livePool.query(
-    `SELECT expression_id,sum(eligible_documents)::bigint eligible,sum(expression_documents)::bigint expressed,sum(occurrence_count)::bigint occurrences,sum(unique_author_estimate)::bigint authors,avg(largest_author_share) largest_author_share,avg(effective_authors) effective_authors,max(window_end) window_end,min(source_health::text) source_health FROM expression_observations_v2 WHERE expression_id=$1 AND window_start=(SELECT max(window_start) FROM expression_observations_v2 WHERE expression_id=$1) GROUP BY expression_id`,
+    `SELECT expression_id,sum(eligible_documents)::bigint eligible,sum(expression_documents)::bigint expressed,sum(occurrence_count)::bigint occurrences,sum(unique_author_estimate)::bigint authors,avg(largest_author_share) largest_author_share,avg(effective_authors) effective_authors,max(window_end) window_end,min(source_health::text) source_health FROM expression_observations_v3 WHERE expression_id=$1 AND language_bucket='ALL' AND window_start=(SELECT max(window_start) FROM expression_observations_v3 WHERE expression_id=$1 AND language_bucket='ALL') GROUP BY expression_id`,
     [id],
   );
   if (!result.rowCount) return null;
@@ -211,12 +217,12 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
   if (path === "/api/v1/data/status") {
     if (dataMode === "live" && livePool) {
       const result = await livePool.query(
-        `SELECT source_id,state,last_event_at,last_receive_at,stream_lag_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version,observed_at FROM source_health_snapshots ORDER BY observed_at DESC LIMIT 1`,
+        `SELECT source_id,state,last_event_at,last_receive_at,stream_lag_ms,lag_p50_ms,lag_p95_ms,lag_p99_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version,observed_at FROM source_health_snapshots_v2 ORDER BY observed_at DESC LIMIT 1`,
       );
       return json(res, 200, {
         data: {
           mode: "LIVE",
-          panel: "COIP-1",
+          panel: "COIP-1.1",
           coverageSources: 1,
           status: "PROVISIONAL",
           registryVersion: "EMOJI-17.0-CULT-V1",
@@ -231,7 +237,7 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
     return json(res, 200, {
       data: {
         mode: "SYNTHETIC",
-        panel: "COIP-1",
+        panel: "COIP-1.1",
         coverageSources: 0,
         status: "SYNTHETIC",
         registryVersion: "EMOJI-17.0-CULT-V1",
@@ -451,6 +457,86 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
     });
   }
   if (path === "/api/v1/events") return json(res, 200, { data: data.events });
+  if (path === "/api/v1/research/series") {
+    const asset = assetByTicker(url.searchParams.get("ticker") ?? "CRY");
+    if (!asset) return json(res, 400, { error: "Unknown expression" });
+    return json(res, 200, {
+      data: data.history[asset.id],
+      provenance: {
+        mode: dataMode.toUpperCase(),
+        methodologyVersion: "REF-JEFFREYS-1",
+        sourceVersion:
+          dataMode === "live" ? "BLUESKY-JETSTREAM-1" : "SYNTHETIC-20260821",
+        expressionRegistryVersion: "EMOJI-17.0-CULT-V1",
+      },
+    });
+  }
+  if (path === "/api/v1/research/factors") {
+    const assets = ASSETS.filter((asset) => data.history[asset.id]?.length),
+      latestReturns = assets.map(
+        (asset) =>
+          logReturns(
+            data.history[asset.id]!.map((point) => point.indexValue),
+          ).at(-1) ?? 0,
+      ),
+      weights = assets.map((asset) =>
+        Math.sqrt(data.history[asset.id]!.at(-1)!.indexValue),
+      ),
+      factors = marketFactors(latestReturns, weights);
+    return json(res, 200, {
+      data: factors,
+      classification: "EXPERIMENTAL",
+      methodologyVersion: "CULT-RESEARCH-1",
+    });
+  }
+  if (path === "/api/v1/research/correlation") {
+    const left = assetByTicker(url.searchParams.get("a") ?? "CRY"),
+      right = assetByTicker(url.searchParams.get("b") ?? "SKULL");
+    if (!left || !right) return json(res, 400, { error: "Unknown expression" });
+    const x = logReturns(
+        data.history[left.id]!.map((point) => point.indexValue),
+      ),
+      y = logReturns(data.history[right.id]!.map((point) => point.indexValue));
+    return json(res, 200, {
+      data: {
+        pearson: correlation(x, y),
+        spearman: spearman(x, y),
+        observations: x.length,
+      },
+      methodologyVersion: "CULT-RESEARCH-1",
+    });
+  }
+  if (path === "/api/v1/research/pairs") {
+    const left = assetByTicker(url.searchParams.get("a") ?? "CRY"),
+      right = assetByTicker(url.searchParams.get("b") ?? "SKULL");
+    if (!left || !right) return json(res, 400, { error: "Unknown expression" });
+    return json(res, 200, {
+      data: pairDiagnostics(
+        data.history[left.id]!.map((point) => point.indexValue),
+        data.history[right.id]!.map((point) => point.indexValue),
+      ),
+      warning: "Pair diagnostics do not establish stationarity or causality.",
+    });
+  }
+  if (path === "/api/v1/research/price-discovery") {
+    const asset = assetByTicker(url.searchParams.get("ticker") ?? "CRY");
+    if (!asset) return json(res, 400, { error: "Unknown expression" });
+    const history = data.history[asset.id]!,
+      premiums = history
+        .slice(0, -1)
+        .map((point) => point.marketPrice / point.indexValue - 1),
+      future = history
+        .slice(1)
+        .map((point, index) =>
+          Math.log(point.indexValue / history[index]!.indexValue),
+        );
+    return json(res, 200, {
+      data: priceDiscoveryRegression(premiums, future),
+      classification: "EXPERIMENTAL",
+      warning:
+        "In-sample synthetic diagnostic; not evidence of predictive power.",
+    });
+  }
   if (path === "/api/v1/research")
     return json(res, 200, {
       data: [

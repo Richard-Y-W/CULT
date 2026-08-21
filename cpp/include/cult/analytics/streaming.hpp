@@ -25,6 +25,18 @@ class Ewma {
   double alpha_; std::optional<double> value_;
 };
 
+class EwmaMoments {
+ public:
+  explicit EwmaMoments(double half_life);
+  void push(double value) noexcept;
+  [[nodiscard]] std::optional<double> mean() const noexcept { return mean_; }
+  [[nodiscard]] double variance() const noexcept { return variance_; }
+ private:
+  double lambda_{};
+  std::optional<double> mean_;
+  double variance_{};
+};
+
 class RollingMoments {
  public:
   explicit RollingMoments(std::size_t capacity);
@@ -49,6 +61,14 @@ class RollingCovariance {
 };
 
 struct Drawdown { double current{}; double maximum{}; };
+struct MarketFactors {
+  double market_return{};
+  double dispersion{};
+  double breadth{};
+  double hhi{};
+  double effective_expression_count{};
+  double normalized_entropy{};
+};
 [[nodiscard]] std::vector<double> simple_returns(std::span<const double> values);
 [[nodiscard]] std::vector<double> log_returns(std::span<const double> values);
 [[nodiscard]] double momentum(std::span<const double> values, std::size_t period);
@@ -60,4 +80,9 @@ struct Drawdown { double current{}; double maximum{}; };
 [[nodiscard]] Drawdown drawdown(std::span<const double> values);
 [[nodiscard]] double z_score(double value, std::span<const double> history);
 [[nodiscard]] double normalized_entropy(std::span<const double> weights);
+[[nodiscard]] double realized_volatility(std::span<const double> returns,double scale=1.0);
+[[nodiscard]] double autocorrelation(std::span<const double> values,std::size_t lag);
+[[nodiscard]] double robust_z_score(double value,std::span<const double> history);
+[[nodiscard]] double spearman_correlation(std::span<const double> lhs,std::span<const double> rhs);
+[[nodiscard]] MarketFactors market_factors(std::span<const double> returns,std::span<const double> weights);
 }

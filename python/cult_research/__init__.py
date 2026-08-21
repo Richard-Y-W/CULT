@@ -10,17 +10,10 @@ try:
         sample_volatility,
         simple_returns,
     )
-except ImportError as error:
-    raise ImportError(
-        "The CULT C++ research binding is not built. Install with `pip install ./python`."
-    ) from error
+    native_available = True
+except ImportError:
+    native_available = False
 
-__all__ = [
-    "beta",
-    "correlation",
-    "jeffreys_prevalence_per_million",
-    "log_returns",
-    "normalized_entropy",
-    "sample_volatility",
-    "simple_returns",
-]
+__all__ = ["native_available"]
+if native_available:
+    __all__ += ["beta", "correlation", "jeffreys_prevalence_per_million", "log_returns", "normalized_entropy", "sample_volatility", "simple_returns"]

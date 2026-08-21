@@ -1,0 +1,26 @@
+schema_version: CULT-STRATEGY-1
+name: residual_momentum
+dataset: CULT-BSKY-PENDING
+universe: emoji_v1_static_research
+signal:
+  type: residual_momentum
+  lookback: 7d
+  market_factor: sqrt_prevalence
+portfolio:
+  long_quantile: 0.2
+  short_quantile: 0.2
+  gross_exposure: 1.0
+  dollar_neutral: true
+  beta_neutral: true
+execution:
+  timing: next_bar
+  delay: 5m
+  commission_bps: 5
+  half_spread_bps: 10
+  impact_model: sqrt_virtual_liquidity
+  borrow_annual: 0.03
+rebalance: 1h
+validation:
+  type: walk_forward
+  purge: 1h
+  embargo: 1h

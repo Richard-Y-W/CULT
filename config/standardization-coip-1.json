@@ -1,0 +1,9 @@
+{
+  "methodology_version": "STANDARDIZATION-1",
+  "status": "CALIBRATING",
+  "source": "BLUESKY",
+  "minimum_calibration_days": 30,
+  "content_weights": null,
+  "language_weights": null,
+  "policy": "Weights are learned from a fixed, explicitly dated calibration sample. Adjusted official values remain null until calibration is activated."
+}

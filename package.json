@@ -20,13 +20,15 @@
     "cpp:configure": "cmake -S cpp -B build/cpp -G Ninja -DCMAKE_BUILD_TYPE=Release",
     "cpp:build": "cmake --build build/cpp",
     "cpp:test": "ctest --test-dir build/cpp --output-on-failure",
-    "cpp:benchmark": "build\\cpp\\cult_benchmarks.exe 1000000",
+    "cpp:benchmark": "build\\cpp\\cult_benchmarks.exe 1000000 30",
     "test:differential": "tsx scripts/differential-test.ts",
     "db:migrate": "tsx scripts/db-migrate.ts",
     "db:seed": "tsx scripts/db-seed.ts",
     "worker": "npm run start -w @cult/worker",
     "smoke:live": "tsx scripts/bluesky-live-smoke.ts",
-    "replay": "tsx scripts/replay.ts"
+    "replay": "tsx scripts/replay.ts",
+    "calibrate:standardization": "tsx scripts/calibrate-standardization.ts",
+    "close:official": "tsx scripts/finalize-official-close.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.34.0",

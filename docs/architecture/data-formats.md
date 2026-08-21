@@ -5,3 +5,7 @@ PostgreSQL is the system of record. Timestamps are UTC `timestamptz`; counts are
 Replay JSONL is aggregate-only and canonicalized for deterministic checksums. Each line is a flushed batch containing window metadata and expression rows. It deliberately contains no post text, handle, DID, or profile data.
 
 Research exports use Parquet/Arrow-compatible columns: timestamp, expression ID, platform ID, content bucket, counts, prevalence, quality components, and version fields. Parquet is an interoperability output, not the transactional source of truth. Schemas evolve additively and carry a schema/methodology version.
+
+`cult-snapshot DATASET_ID START END` writes a new immutable directory and refuses an existing target. Each table has a SHA-256 hash and exact columns in `manifest.json`, alongside Git SHA, dependency versions, time range, source, registry, and methodology. Example IDs follow `CULT-BSKY-2026-08-v1`; experiments reference the ID and manifest rather than a mutable query.
+
+Phase 3 canonical tables begin with `expression_prevalence.parquet` and `official_closes.parquet`. Derived snapshots may add `expression_returns`, `expression_signals`, `market_factors`, `quality_metrics`, and `events`. Raw post bodies, handles, and profiles are prohibited.

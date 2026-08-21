@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 #include <numeric>
+#include <optional>
 #include <stdexcept>
 
 namespace cult::backtest {
@@ -32,17 +33,20 @@ Result run(std::span<const TimestampMs> timestamps, std::span<const double> pric
            Strategy& strategy, const Config& config) {
   if (timestamps.empty() || asset_count == 0 || prices.size() != timestamps.size() * asset_count)
     throw std::invalid_argument("backtest data dimensions invalid");
+  if (config.periods_per_year <= 0.0) throw std::invalid_argument("periods_per_year must be explicit and positive");
   double cash = config.initial_cash, turnover = 0.0;
   std::size_t trades = 0, winning = 0, holding_sum = 0;
   std::vector<double> quantity(asset_count), entry(asset_count), held(asset_count);
   Result result;
+  struct PendingTargets { std::size_t execute_at{}; std::vector<Target> targets; };
+  std::optional<PendingTargets> pending;
   result.equity_curve.reserve(timestamps.size());
   for (std::size_t bar = 0; bar < timestamps.size(); ++bar) {
     double equity = cash;
     for (std::size_t asset = 0; asset < asset_count; ++asset) equity += quantity[asset] * prices[bar * asset_count + asset];
-    if (bar % config.rebalance_every == 0) {
-      const DataView view(timestamps, prices, asset_count, bar);
-      const auto requested = strategy.on_bar(view);
+    if (pending && pending->execute_at == bar) {
+      const auto requested = std::move(pending->targets);
+      pending.reset();
       std::vector<double> weights(asset_count);
       for (const auto& target : requested) if (target.asset < asset_count) weights[target.asset] = target.weight;
       double gross_weight = 0.0;
@@ -54,11 +58,18 @@ Result run(std::span<const TimestampMs> timestamps, std::span<const double> pric
         const double desired = equity * weights[asset] * scale / price;
         const double delta = desired - quantity[asset], notional = std::abs(delta * price);
         if (notional < 1e-9) continue;
-        const double execution = price * (1.0 + (delta > 0.0 ? config.slippage_rate : -config.slippage_rate));
-        const double fee = notional * config.fee_rate;
+        const double participation = config.virtual_liquidity > 0.0 ? notional / config.virtual_liquidity : 0.0;
+        const double spread = notional * config.half_spread_rate;
+        const double impact = notional * config.impact_coefficient * std::sqrt(std::max(0.0, participation));
+        const double execution_cost = spread + impact;
+        const double execution = price + (delta > 0.0 ? execution_cost : -execution_cost) / std::abs(delta);
+        const double fee = notional * config.commission_rate;
         if (quantity[asset] != 0.0 && std::signbit(quantity[asset]) != std::signbit(desired) &&
             quantity[asset] * (execution - entry[asset]) > 0.0) ++winning;
         cash -= delta * execution + fee;
+        result.commission_cost += fee;
+        result.spread_cost += spread;
+        result.impact_cost += impact;
         turnover += notional;
         ++trades;
         if (desired == 0.0) {
@@ -67,9 +78,20 @@ Result run(std::span<const TimestampMs> timestamps, std::span<const double> pric
         quantity[asset] = desired;
       }
     }
+    if (bar % config.rebalance_every == 0 && bar + config.execution_delay_bars < timestamps.size()) {
+      const DataView view(timestamps, prices, asset_count, bar);
+      pending = PendingTargets{bar + config.execution_delay_bars, strategy.on_bar(view)};
+    }
     for (std::size_t asset = 0; asset < asset_count; ++asset) {
       if (quantity[asset] != 0.0) held[asset] += 1.0;
-      if (quantity[asset] < 0.0) cash -= std::abs(quantity[asset] * prices[bar * asset_count + asset]) * config.annual_borrow_rate / 365.0;
+      if (quantity[asset] < 0.0) {
+        const double cost = std::abs(quantity[asset] * prices[bar * asset_count + asset]) * config.annual_borrow_rate / config.periods_per_year;
+        cash -= cost; result.borrow_cost += cost;
+      }
+    }
+    if (cash < 0.0) {
+      const double cost = -cash * config.annual_funding_rate / config.periods_per_year;
+      cash -= cost; result.funding_cost += cost;
     }
     equity = cash;
     for (std::size_t asset = 0; asset < asset_count; ++asset) equity += quantity[asset] * prices[bar * asset_count + asset];
@@ -83,16 +105,32 @@ Result run(std::span<const TimestampMs> timestamps, std::span<const double> pric
   const double mean = returns.empty() ? 0.0 : std::accumulate(returns.begin(), returns.end(), 0.0) / static_cast<double>(returns.size());
   const double volatility = analytics::sample_volatility(returns);
   const double downside = negatives ? std::sqrt(negative_squares / static_cast<double>(negatives)) : 0.0;
+  std::vector<double> sorted_returns = returns;
+  std::sort(sorted_returns.begin(), sorted_returns.end());
+  if (!sorted_returns.empty()) {
+    const auto cutoff = std::min(sorted_returns.size() - 1,
+      static_cast<std::size_t>(std::floor(0.05 * static_cast<double>(sorted_returns.size()))));
+    result.value_at_risk_95 = -sorted_returns[cutoff];
+    result.expected_shortfall_95 = -std::accumulate(sorted_returns.begin(), sorted_returns.begin() + cutoff + 1, 0.0) /
+      static_cast<double>(cutoff + 1);
+  }
+  double peak = result.equity_curve.front();
+  std::size_t duration = 0, maximum_duration = 0;
+  for (const double value : result.equity_curve) {
+    if (value >= peak) { peak = value; duration = 0; }
+    else { ++duration; maximum_duration = std::max(maximum_duration, duration); }
+  }
   double gross = 0.0, net = 0.0;
   for (std::size_t asset = 0; asset < asset_count; ++asset) {
     const double value = quantity[asset] * prices[(timestamps.size() - 1) * asset_count + asset];
     gross += std::abs(value); net += value;
   }
   result.total_return = result.equity_curve.back() / config.initial_cash - 1.0;
-  result.annualized_volatility = volatility * std::sqrt(365.0);
-  result.sharpe_like = volatility > 0.0 ? mean / volatility * std::sqrt(365.0) : 0.0;
-  result.sortino = downside > 0.0 ? mean / downside * std::sqrt(365.0) : 0.0;
+  result.annualized_volatility = volatility * std::sqrt(config.periods_per_year);
+  result.sharpe_like = volatility > 0.0 ? mean / volatility * std::sqrt(config.periods_per_year) : 0.0;
+  result.sortino = downside > 0.0 ? mean / downside * std::sqrt(config.periods_per_year) : 0.0;
   result.maximum_drawdown = drawdown.maximum;
+  result.drawdown_duration = static_cast<double>(maximum_duration);
   result.turnover = turnover / config.initial_cash;
   result.gross_exposure = gross;
   result.net_exposure = net;

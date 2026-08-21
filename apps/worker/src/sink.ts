@@ -27,21 +27,27 @@ export class PostgresAggregateSink implements AggregateSink {
     try {
       for (const o of batch.observations)
         await this.db.query(
-          `INSERT INTO expression_observations_v2(expression_id,platform_id,content_bucket,window_start,window_end,eligible_documents,expression_documents,occurrence_count,unique_author_estimate,raw_prevalence,smoothed_prevalence,largest_author_share,top_ten_author_share,effective_authors,source_health,methodology_version,source_version,expression_registry_version) VALUES($1,'BLUESKY',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) ON CONFLICT(expression_id,platform_id,content_bucket,window_start,methodology_version,source_version,expression_registry_version) DO UPDATE SET eligible_documents=excluded.eligible_documents,expression_documents=excluded.expression_documents,occurrence_count=excluded.occurrence_count,unique_author_estimate=excluded.unique_author_estimate,raw_prevalence=excluded.raw_prevalence,smoothed_prevalence=excluded.smoothed_prevalence,largest_author_share=excluded.largest_author_share,top_ten_author_share=excluded.top_ten_author_share,effective_authors=excluded.effective_authors,source_health=excluded.source_health`,
+          `INSERT INTO expression_observations_v3(expression_id,platform_id,content_bucket,language_bucket,window_start,window_end,observed_at,arrival_mode,eligible_documents,expression_documents,occurrence_count,intensity_when_present,unique_author_estimate,raw_prevalence,smoothed_prevalence,largest_author_share,top_ten_author_share,author_hhi,effective_authors,documents_per_effective_author,source_health,methodology_version,source_version,expression_registry_version) VALUES($1,'BLUESKY',$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23) ON CONFLICT(expression_id,platform_id,content_bucket,language_bucket,window_start,methodology_version,source_version,expression_registry_version) DO UPDATE SET window_end=excluded.window_end,observed_at=excluded.observed_at,arrival_mode=excluded.arrival_mode,eligible_documents=excluded.eligible_documents,expression_documents=excluded.expression_documents,occurrence_count=excluded.occurrence_count,intensity_when_present=excluded.intensity_when_present,unique_author_estimate=excluded.unique_author_estimate,raw_prevalence=excluded.raw_prevalence,smoothed_prevalence=excluded.smoothed_prevalence,largest_author_share=excluded.largest_author_share,top_ten_author_share=excluded.top_ten_author_share,author_hhi=excluded.author_hhi,effective_authors=excluded.effective_authors,documents_per_effective_author=excluded.documents_per_effective_author,source_health=excluded.source_health`,
           [
             o.expressionId,
             o.contentBucket,
+            o.languageBucket,
             o.windowStart,
             o.windowEnd,
+            batch.observedAt,
+            o.arrivalMode,
             o.eligibleDocuments,
             o.expressionDocuments,
             o.occurrenceCount,
+            o.intensityWhenPresent,
             o.uniqueAuthorEstimate,
             o.rawPrevalence,
             o.smoothedPrevalence,
             o.largestAuthorShare,
             o.topTenAuthorShare,
+            o.authorHhi,
             o.effectiveAuthors,
+            o.documentsPerEffectiveAuthor,
             o.sourceHealth,
             o.methodologyVersion,
             o.sourceVersion,
@@ -58,8 +64,9 @@ export class PostgresAggregateSink implements AggregateSink {
         ],
       );
       await this.db.query(
-        `INSERT INTO source_health_snapshots(source_id,observed_at,state,last_event_at,last_receive_at,stream_lag_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version) VALUES('BLUESKY',now(),$1,$2,$3,$4,$5,$6,$7,$8,'BLUESKY-JETSTREAM-1')`,
+        `INSERT INTO source_health_snapshots_v2(source_id,observed_at,state,last_event_at,last_receive_at,stream_lag_ms,lag_p50_ms,lag_p95_ms,lag_p99_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version) VALUES('BLUESKY',$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'BLUESKY-JETSTREAM-1')`,
         [
+          batch.observedAt,
           batch.health.state,
           batch.health.lastEventTimestampMs
             ? new Date(batch.health.lastEventTimestampMs)
@@ -68,6 +75,9 @@ export class PostgresAggregateSink implements AggregateSink {
             ? new Date(batch.health.lastReceiveTimestampMs)
             : null,
           batch.health.streamLagMs,
+          batch.health.lagP50Ms,
+          batch.health.lagP95Ms,
+          batch.health.lagP99Ms,
           batch.health.eventsPerMinute,
           batch.health.parseErrors,
           batch.health.duplicateEvents,

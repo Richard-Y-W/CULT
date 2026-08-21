@@ -6,13 +6,16 @@
 - The initial PostgreSQL migration and seed scripts were not executed in this build environment because its Docker daemon was unavailable; they require a live PostgreSQL 16 instance for verification.
 - Authentication is a development cookie/account, not production identity infrastructure.
 - The product execution path remains immediate. C++ virtual liquidity, impact, spread, borrow cost, leverage, margin-call, and liquidation primitives are experimental and not yet the API execution path.
-- The C++ backtester enforces a time-bounded DataView and supports fees, slippage, shorts, borrow cost, exposure metrics, and a momentum strategy. The UI still runs the TypeScript synthetic momentum example.
+- The C++ backtester enforces a time-bounded DataView and next-bar-by-default execution. It models commission, spread, square-root virtual impact, shorts, borrow/funding, exposure, VaR/ES, and drawdown duration. Its parameters are simulated rather than empirically calibrated. The UI still runs the older TypeScript example.
 - Cultural baskets contain fewer constituents than their names imply; custom indexes have a schema boundary but no editor yet.
 - Semantic labels are synthetic, English-oriented examples and support no demographic inference. Curated semantic indexes are labelled CURATED, not empirical.
 - No billing, prizes, redemption, transfers, blockchain, payments, derivatives, export, or real-money functionality.
 - No production rate limiter, Redis, TimescaleDB, ClickHouse, scraping fleet, or large-scale analytics store.
 - UI charts are dependency-light SVG polylines and have limited interaction/accessibility.
-- Official daily-close finalization and operational revision tooling are schema/methodology contracts, not yet a scheduled production job.
-- Data-quality components exist, but cross-source agreement is unavailable and the composite is withheld in one-source mode. Block-bootstrap uncertainty is designed but not yet used live.
+- Official daily-close and calibration commands exist but are not scheduled and have not been exercised locally against PostgreSQL. A final close requires exactly 1,440 observed UTC minute windows; revisions remain a separate audited workflow.
+- Data-quality components exist, but cross-source agreement is unavailable and the composite is deliberately withheld. Wilson and moving-block intervals exist; bootstrap intervals are not yet materialized for every live tick.
+- No repository snapshot contains seven complete days of live data. Report 001 therefore refuses inferential findings; PCA, momentum, pair, and premium-predictability results remain unanswered rather than simulated as empirical evidence.
+- Declared source language supplies Phase 3 language buckets. It is often absent and is not a validated language-classification model.
+- Standardization remains `CALIBRATING` until a fixed 30-day period reaches 95% minute coverage. No official fixed content/language weights are currently claimed.
 - Optional Node-API and pybind11 source boundaries exist. This Windows image lacks Node/Python development headers, so local binding binaries were not built; CI owns the supported Linux compile path.
 - C++ property testing covers deterministic hostile bytes and extreme combining input, but a coverage-guided libFuzzer corpus/job is not yet present.

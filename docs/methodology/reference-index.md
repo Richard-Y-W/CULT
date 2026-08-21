@@ -10,6 +10,6 @@ I(e,0) = 1000
 I(e,t) = I(e,t-1) × exp(r(e,t))
 ```
 
-In COIP-1, Bluesky’s effective weight is 1. An **indicative intraday index** may update each minute and carries source-health flags. An **official daily close** uses a fixed UTC day and records `is_final`, methodology version, registry version, source version, and revision number. Missing or unhealthy source windows are flagged rather than silently imputed.
+In COIP-1.1, Bluesky’s effective weight is 1. An **indicative intraday index** may update each minute and carries source-health flags. An **official daily close** uses a fixed UTC day and records `is_final`, methodology version, registry version, source version, and revision number. Missing or unhealthy source windows are flagged rather than silently imputed.
 
 Market/reference premium is `market / reference - 1`. It is a CULT-native speculative signal, not part of the reference calculation.
