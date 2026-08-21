@@ -114,3 +114,10 @@
 - Docker Desktop's server daemon was not running, so migration 004 was not executed against local PostgreSQL. CI remains responsible for the PostgreSQL 16 migration check; this local run does not claim it passed.
 - ESLint was updated to ignore all generated CMake `build` trees after the final multi-toolchain matrix exposed CMake files named `compiler_depend.ts`.
 - Phase 4 backend feature expansion is frozen. The next recommended phase is 4.5 product/frontend work, followed by a measured 72-hour minimum live-shadow campaign before any explicit live-market consideration.
+
+## 2026-08-21 — Dockerized Bluesky live-shadow runbook
+
+- Added a dedicated Node 20 worker image and opt-in Compose `live-shadow` profile. It starts PostgreSQL, runs migrations to completion, and only then starts the Jetstream collector with `CULT_DATA_MODE=live-shadow` fixed in the container configuration.
+- Added a persistent `cult_live_data` volume for aggregate replay tapes, privacy-safe behavior events, and cursor checkpoints. The checkpoint path is now configurable without changing the local default.
+- `docker compose --profile live-shadow config`, TypeScript lint/typecheck, and all 51 tests passed. An actual container build/start could not run because Docker Desktop's server daemon remains unavailable on this machine.
+- `live-market` remains disabled; this deployment profile cannot turn it on.

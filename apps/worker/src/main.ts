@@ -60,6 +60,9 @@ const replayPath = fromRoot(
   process.env.CULT_REPLAY_PATH ??
     `data/replays/bluesky/${new Date().toISOString().slice(0, 10)}.jsonl`,
 );
+const checkpointPath = fromRoot(
+  process.env.CULT_CHECKPOINT_PATH ?? "data/checkpoints/bluesky.json",
+);
 if (liveSource) {
   if (!process.env.DATABASE_URL)
     throw new Error(
@@ -74,7 +77,7 @@ async function flush() {
   if (!batch) return;
   await sink.write(batch);
   await writeCheckpoint(
-    fromRoot("data/checkpoints/bluesky.json"),
+    checkpointPath,
     batch.cursor,
   );
   console.log(
@@ -134,7 +137,7 @@ async function live() {
   let attempt = 0;
   while (!stopping) {
     const cursor = await readFile(
-        fromRoot("data/checkpoints/bluesky.json"),
+      checkpointPath,
         "utf8",
       )
         .then((text) => (JSON.parse(text) as { cursor: number }).cursor)

@@ -55,6 +55,14 @@ CULT_DATA_MODE=live-shadow DATABASE_URL=postgresql://cult:cult@localhost:5432/cu
 
 The live worker stores aggregate observations, watermarks, health, and an optional opaque-ID behavior tape—not handles, profiles, DIDs, AT URIs, or post bodies.
 
+For durable collection entirely under Docker, set a stable `CULT_CASCADE_HASH_SECRET` in `.env` and run:
+
+```bash
+docker compose --profile live-shadow up --build
+```
+
+This starts PostgreSQL, applies migrations, and connects the worker to Bluesky Jetstream in explicitly non-authoritative shadow mode. The `cult_live_data` volume retains replay tapes and the resume checkpoint. It does not activate `live-market`; see [the worker runbook](apps/worker/README.md).
+
 ## Phase 4 deterministic exchange lab
 
 ```bash

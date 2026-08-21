@@ -1,0 +1,16 @@
+.git
+.github
+.agents
+.codex
+build
+node_modules
+**/dist
+**/*.tsbuildinfo
+data/checkpoints
+data/replays
+data/synthetic
+research/results
+coverage
+__pycache__
+*.pyc
+

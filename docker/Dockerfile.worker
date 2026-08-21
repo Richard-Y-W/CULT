@@ -1,0 +1,19 @@
+FROM node:20-bookworm-slim
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+COPY apps ./apps
+COPY packages ./packages
+COPY scripts ./scripts
+COPY data/reference ./data/reference
+COPY data/fixtures ./data/fixtures
+COPY tsconfig.json tsconfig.base.json ./
+
+RUN npm ci --ignore-scripts \
+    && npm run build -w @cult/worker
+
+ENV NODE_ENV=production
+
+CMD ["npm", "run", "worker"]
+

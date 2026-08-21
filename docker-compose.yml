@@ -12,5 +12,41 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  migrate:
+    profiles: ["live-shadow"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    command: ["npm", "run", "db:migrate"]
+    environment:
+      DATABASE_URL: postgresql://cult:cult@postgres:5432/cult
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  bluesky-worker:
+    profiles: ["live-shadow"]
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.worker
+    command: ["npm", "run", "worker"]
+    environment:
+      CULT_DATA_MODE: live-shadow
+      DATABASE_URL: postgresql://cult:cult@postgres:5432/cult
+      BLUESKY_JETSTREAM_URL: ${BLUESKY_JETSTREAM_URL:-wss://jetstream2.us-east.bsky.network/subscribe}
+      CULT_CASCADE_HASH_SECRET: ${CULT_CASCADE_HASH_SECRET:-local-development-only-change-me}
+      CULT_REPLAY_PATH: data/runtime/replays/bluesky.jsonl
+      CULT_BEHAVIOR_TAPE_PATH: data/runtime/replays/expression-events.jsonl
+      CULT_CHECKPOINT_PATH: data/runtime/checkpoints/bluesky.json
+    volumes:
+      - cult_live_data:/app/data/runtime
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
 volumes:
   cult_postgres:
+  cult_live_data:
