@@ -1,2 +1,30 @@
-import{describe,expect,it}from'vitest';import{calculateWeights,IndexHistory,indexValue}from'@cult/index-engine';
-describe('index engine',()=>{it('normalizes weights and respects feasible caps',()=>{const w=calculateWeights([100,10,1,1],'ATTENTION_WEIGHTED',.4);expect(w.reduce((a,b)=>a+b,0)).toBeCloseTo(1);expect(Math.max(...w)).toBeLessThanOrEqual(.4000001)});it('calculates chain-relative index values',()=>{expect(indexValue(100,{a:10,b:20},{a:11,b:18},[{assetId:'a',weight:.5},{assetId:'b',weight:.5}])).toBe(100)});it('freezes historical composition',()=>{const h=new IndexHistory(),input={effectiveAt:'2026-01-01',constituents:[{assetId:'a',weight:1}]};h.rebalance(input);input.constituents[0]!.weight=.5;expect(h.compositionAt('2026-02-01')!.constituents[0]!.weight).toBe(1);expect(()=>h.rebalance({effectiveAt:'2026-01-01',constituents:[]})).toThrow()})});
+import { describe, expect, it } from "vitest";
+import { calculateWeights, IndexHistory, indexValue } from "@cult/index-engine";
+describe("index engine", () => {
+  it("normalizes weights and respects feasible caps", () => {
+    const w = calculateWeights([100, 10, 1, 1], "ATTENTION_WEIGHTED", 0.4);
+    expect(w.reduce((a, b) => a + b, 0)).toBeCloseTo(1);
+    expect(Math.max(...w)).toBeLessThanOrEqual(0.4000001);
+  });
+  it("calculates chain-relative index values", () => {
+    expect(
+      indexValue(100, { a: 10, b: 20 }, { a: 11, b: 18 }, [
+        { assetId: "a", weight: 0.5 },
+        { assetId: "b", weight: 0.5 },
+      ]),
+    ).toBe(100);
+  });
+  it("freezes historical composition", () => {
+    const h = new IndexHistory(),
+      input = {
+        effectiveAt: "2026-01-01",
+        constituents: [{ assetId: "a", weight: 1 }],
+      };
+    h.rebalance(input);
+    input.constituents[0]!.weight = 0.5;
+    expect(h.compositionAt("2026-02-01")!.constituents[0]!.weight).toBe(1);
+    expect(() =>
+      h.rebalance({ effectiveAt: "2026-01-01", constituents: [] }),
+    ).toThrow();
+  });
+});

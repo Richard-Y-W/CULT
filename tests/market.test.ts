@@ -1,2 +1,56 @@
-import{describe,expect,it}from'vitest';import{SimulatedMarket}from'@cult/market-engine';
-describe('market accounting',()=>{it('buys, sells, marks P&L, charges fees, and balances its cash ledger',()=>{const m=new SimulatedMarket(1_000_000n,{cry:100},.001);const buy=m.submitOrder({userId:'demo',assetId:'cry',side:'BUY',quantity:10});expect(m.cash).toBeCloseTo(10000-buy.price*10-buy.fee);expect(m.portfolio().positions[0]!.quantity).toBe(10);const sell=m.submitOrder({userId:'demo',assetId:'cry',side:'SELL',quantity:4});expect(m.portfolio().positions[0]!.realizedPnl).toBeCloseTo(4*(sell.price-buy.price));expect(m.ledger.reduce((s,e)=>s+e.amountMinor,0n)).toBe(m.cashMinor)});it('shorts and covers with correct exposure',()=>{const m=new SimulatedMarket(1_000_000n,{skull:50});m.submitOrder({userId:'demo',assetId:'skull',side:'SHORT',quantity:5});expect(m.portfolio().netExposure).toBe(-250);m.submitOrder({userId:'demo',assetId:'skull',side:'COVER',quantity:5});expect(m.portfolio().positions).toHaveLength(0)});it('rejects invalid balances and position closes',()=>{const m=new SimulatedMarket(1000n,{x:100});expect(()=>m.submitOrder({userId:'demo',assetId:'x',side:'BUY',quantity:1})).toThrow('Insufficient');expect(()=>m.submitOrder({userId:'demo',assetId:'x',side:'SELL',quantity:1})).toThrow('Insufficient long')})});
+import { describe, expect, it } from "vitest";
+import { SimulatedMarket } from "@cult/market-engine";
+describe("market accounting", () => {
+  it("buys, sells, marks P&L, charges fees, and balances its cash ledger", () => {
+    const m = new SimulatedMarket(1_000_000n, { cry: 100 }, 0.001);
+    const buy = m.submitOrder({
+      userId: "demo",
+      assetId: "cry",
+      side: "BUY",
+      quantity: 10,
+    });
+    expect(m.cash).toBeCloseTo(10000 - buy.price * 10 - buy.fee);
+    expect(m.portfolio().positions[0]!.quantity).toBe(10);
+    const sell = m.submitOrder({
+      userId: "demo",
+      assetId: "cry",
+      side: "SELL",
+      quantity: 4,
+    });
+    expect(m.portfolio().positions[0]!.realizedPnl).toBeCloseTo(
+      4 * (sell.price - buy.price),
+    );
+    expect(m.ledger.reduce((s, e) => s + e.amountMinor, 0n)).toBe(m.cashMinor);
+  });
+  it("shorts and covers with correct exposure", () => {
+    const m = new SimulatedMarket(1_000_000n, { skull: 50 });
+    m.submitOrder({
+      userId: "demo",
+      assetId: "skull",
+      side: "SHORT",
+      quantity: 5,
+    });
+    expect(m.portfolio().netExposure).toBe(-250);
+    m.submitOrder({
+      userId: "demo",
+      assetId: "skull",
+      side: "COVER",
+      quantity: 5,
+    });
+    expect(m.portfolio().positions).toHaveLength(0);
+  });
+  it("rejects invalid balances and position closes", () => {
+    const m = new SimulatedMarket(1000n, { x: 100 });
+    expect(() =>
+      m.submitOrder({ userId: "demo", assetId: "x", side: "BUY", quantity: 1 }),
+    ).toThrow("Insufficient");
+    expect(() =>
+      m.submitOrder({
+        userId: "demo",
+        assetId: "x",
+        side: "SELL",
+        quantity: 1,
+      }),
+    ).toThrow("Insufficient long");
+  });
+});

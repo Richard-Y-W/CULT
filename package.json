@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "version": "0.1.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "setup": "npm install && npm run generate:synthetic",
     "dev": "concurrently -n API,WEB -c yellow,cyan \"npm run dev -w @cult/api\" \"npm run dev -w @cult/web\"",
@@ -12,9 +15,18 @@
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc -b",
     "generate:synthetic": "tsx scripts/generate-synthetic.ts",
+    "generate:unicode": "tsx scripts/generate-unicode-registry.ts",
     "smoke": "tsx scripts/smoke-test.ts",
+    "cpp:configure": "cmake -S cpp -B build/cpp -G Ninja -DCMAKE_BUILD_TYPE=Release",
+    "cpp:build": "cmake --build build/cpp",
+    "cpp:test": "ctest --test-dir build/cpp --output-on-failure",
+    "cpp:benchmark": "build\\cpp\\cult_benchmarks.exe 1000000",
+    "test:differential": "tsx scripts/differential-test.ts",
     "db:migrate": "tsx scripts/db-migrate.ts",
-    "db:seed": "tsx scripts/db-seed.ts"
+    "db:seed": "tsx scripts/db-seed.ts",
+    "worker": "npm run start -w @cult/worker",
+    "smoke:live": "tsx scripts/bluesky-live-smoke.ts",
+    "replay": "tsx scripts/replay.ts"
   },
   "devDependencies": {
     "@eslint/js": "9.34.0",
@@ -30,5 +42,7 @@
     "typescript-eslint": "8.41.0",
     "vitest": "^3.2.4"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  }
 }

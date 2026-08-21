@@ -216,8 +216,8 @@ function Home({ go }: { go: (p: string) => void }) {
           <dl>
             <dt>1D MOMENTUM</dt>
             <dd className="up">+18.2%</dd>
-            <dt>DATA CONFIDENCE</dt>
-            <dd>82 / 100</dd>
+            <dt>DATA MODE</dt>
+            <dd>SYNTHETIC</dd>
           </dl>
         </div>
       </section>
@@ -270,7 +270,10 @@ function Asset({ ticker, go }: { ticker: string; go: (p: string) => void }) {
             <div>
               <small>EXPRESSION INDEX</small>
               <strong>{money(asset.currentIndexValue)}</strong>
-              <span>Confidence {asset.confidence}/100</span>
+              <span>
+                {asset.referenceMetrics?.mode ?? "UNKNOWN"} ·{" "}
+                {asset.referenceMetrics?.status ?? "UNKNOWN"}
+              </span>
             </div>
           </div>
           <div className="chart-panel">
@@ -558,6 +561,7 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
     "/analytics/correlation",
     [],
   );
+  const { data: dataStatus } = useApi<any>("/data/status", null);
   const [pair, setPair] = useState<any>(null),
     [backtest, setBacktest] = useState<any>(null);
   useEffect(() => {
@@ -570,7 +574,10 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
       </div>
     );
   const points = (history.data ?? history ?? []) as MarketPoint[],
-    latest = semantics.at(-1)?.labels ?? asset.latestSemantics.labels;
+    latest = semantics.at(-1)?.labels ?? asset.latestSemantics.labels,
+    reference = asset.referenceMetrics;
+  const metric = (value: number | null | undefined, digits = 2) =>
+    value == null ? "N/A" : value.toFixed(digits);
   return (
     <div className="terminal">
       <header className="term-head">
@@ -586,9 +593,9 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
           <kbd>ENTER</kbd>
         </div>
         <div className="system">
-          <i /> SYSTEM NORMAL
+          <i /> {reference?.sourceHealth ?? "UNKNOWN"}
           <br />
-          <small>DATA {asset.confidence}/100</small>
+          <small>{reference?.mode ?? "UNKNOWN"} DATA</small>
         </div>
       </header>
       <div className="term-body">
@@ -605,6 +612,7 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
             "Pairs",
             "Indexes",
             "Events",
+            "Data",
             "Backtest",
           ].map((x, i) => (
             <button className={i === 0 ? "active" : ""}>
@@ -624,10 +632,10 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
               <h1>{asset.displayName.toUpperCase()}</h1>
             </div>
             <div className="term-price">
-              <small>MARKET / INDEX</small>
-              <strong>{money(asset.marketPrice)}</strong>
+              <small>REFERENCE / MARKET</small>
+              <strong>{money(asset.currentIndexValue)}</strong>
               <span>
-                {money(asset.currentIndexValue)}{" "}
+                {money(asset.marketPrice)}{" "}
                 <em>
                   {pct((asset.marketPrice / asset.currentIndexValue - 1) * 100)}{" "}
                   PREMIUM
@@ -729,6 +737,61 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
             <section className="panel wide">
               <PanelTitle
                 n="04"
+                title="REFERENCE & DATA QUALITY"
+                meta={`${reference?.mode ?? "UNKNOWN"} · ${reference?.status ?? "UNKNOWN"}`}
+              />
+              <div className="term-kpis">
+                <TermKpi
+                  label="USES / 1M"
+                  value={metric(reference?.rawPrevalence)}
+                />
+                <TermKpi
+                  label="SMOOTHED / 1M"
+                  value={metric(reference?.smoothedPrevalence)}
+                />
+                <TermKpi
+                  label="VELOCITY"
+                  value={metric(reference?.signals?.velocity, 4)}
+                />
+                <TermKpi
+                  label="ACCELERATION"
+                  value={metric(reference?.signals?.acceleration, 4)}
+                />
+                <TermKpi
+                  label="BREADTH"
+                  value={metric(reference?.signals?.breadth, 3)}
+                />
+                <TermKpi
+                  label="PERSISTENCE"
+                  value={metric(reference?.signals?.persistence, 3)}
+                />
+              </div>
+              <dl className="term-dl">
+                <dt>COIP SOURCES</dt>
+                <dd>{reference?.coipSources ?? "N/A"}</dd>
+                <dt>SOURCE HEALTH</dt>
+                <dd>{reference?.sourceHealth ?? "N/A"}</dd>
+                <dt>DATA QUALITY SCORE</dt>
+                <dd>{metric(reference?.dataQualityScore)}</dd>
+                <dt>SEASONAL ADJUSTMENT</dt>
+                <dd>
+                  {reference?.seasonalAdjustmentStatus ??
+                    "INSUFFICIENT_HISTORY"}
+                </dd>
+                <dt>METHODOLOGY</dt>
+                <dd>{reference?.methodologyVersion ?? "N/A"}</dd>
+                <dt>REGISTRY</dt>
+                <dd>{reference?.expressionRegistryVersion ?? "N/A"}</dd>
+              </dl>
+              <p className="fineprint">
+                A data-quality score is not a probability. Unavailable
+                components remain N/A; live one-source observations are
+                provisional.
+              </p>
+            </section>
+            <section className="panel wide">
+              <PanelTitle
+                n="05"
                 title="ROLLING CORRELATION MATRIX"
                 meta="90D · PEARSON"
               />
@@ -737,27 +800,23 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
                 {corr.slice(0, 7).map((r) => (
                   <b>{r.ticker}</b>
                 ))}
-                {corr
-                  .slice(0, 7)
-                  .flatMap((r, i) => [
-                    <b key={`row-${r.ticker}`}>{r.ticker}</b>,
-                    ...r.values
-                      .slice(0, 7)
-                      .map((v, j) => (
-                        <i
-                          key={`${i}-${j}`}
-                          style={{
-                            background: `rgba(${v > 0 ? "110,208,70" : "220,75,75"},${0.12 + Math.abs(v) * 0.65})`,
-                          }}
-                        >
-                          {v.toFixed(2)}
-                        </i>
-                      )),
-                  ])}
+                {corr.slice(0, 7).flatMap((r, i) => [
+                  <b key={`row-${r.ticker}`}>{r.ticker}</b>,
+                  ...r.values.slice(0, 7).map((v, j) => (
+                    <i
+                      key={`${i}-${j}`}
+                      style={{
+                        background: `rgba(${v > 0 ? "110,208,70" : "220,75,75"},${0.12 + Math.abs(v) * 0.65})`,
+                      }}
+                    >
+                      {v.toFixed(2)}
+                    </i>
+                  )),
+                ])}
               </div>
             </section>
             <section className="panel">
-              <PanelTitle n="05" title="PAIR MONITOR" meta="CRY / SKULL" />
+              <PanelTitle n="06" title="PAIR MONITOR" meta="CRY / SKULL" />
               {pair && (
                 <>
                   <div className="pair-value">
@@ -781,7 +840,7 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
             </section>
             <section className="panel">
               <PanelTitle
-                n="06"
+                n="07"
                 title="BACKTEST LAB"
                 meta="NO LOOK-AHEAD · 10 BPS"
               />
@@ -822,10 +881,13 @@ function Terminal({ path, go }: { path: string; go: (p: string) => void }) {
       </div>
       <div className="statusbar">
         <span>CULT OBSERVABLE INTERNET PANEL</span>
-        <span>SEED 20260821</span>
-        <span>OBJECTIVE LAYER: ONLINE</span>
+        <span>{reference?.methodologyVersion ?? "COIP-1"}</span>
+        <span>OBJECTIVE LAYER: {reference?.mode ?? "UNKNOWN"}</span>
+        <span>
+          SOURCE: {dataStatus?.source?.state ?? reference?.sourceHealth}
+        </span>
         <span>SEMANTIC LAYER: SYNTHETIC</span>
-        <span>UTC 20:26:08</span>
+        <span>REGISTRY: {reference?.expressionRegistryVersion ?? "N/A"}</span>
       </div>
     </div>
   );

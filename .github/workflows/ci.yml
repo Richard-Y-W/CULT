@@ -1,0 +1,96 @@
+name: CULT CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  typescript:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: cult
+          POSTGRES_PASSWORD: cult
+          POSTGRES_DB: cult
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cult"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://cult:cult@localhost:5432/cult
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run generate:unicode
+      - run: npm run generate:synthetic
+      - run: npm run db:migrate
+      - run: npm run db:seed
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  cpp:
+    strategy:
+      matrix:
+        compiler: [gcc, clang]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Select compiler
+        run: |
+          if [ "${{ matrix.compiler }}" = "clang" ]; then
+            echo "CXX=clang++" >> "$GITHUB_ENV"
+          else
+            echo "CXX=g++" >> "$GITHUB_ENV"
+          fi
+      - run: cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
+      - run: cmake --build build/cpp --parallel
+      - run: ctest --test-dir build/cpp --output-on-failure
+      - run: npm ci
+      - run: npm run test:differential
+      - name: Build Node-API boundary
+        run: >-
+          cmake -S cpp -B build/node
+          -DCMAKE_BUILD_TYPE=Release
+          -DCULT_BUILD_TESTS=OFF
+          -DCULT_BUILD_BENCHMARKS=OFF
+          -DCULT_BUILD_NODE_BINDING=ON
+          -DNODE_INCLUDE_DIR="$(node -p 'require("path").resolve(require("path").dirname(process.execPath), "../include/node")')"
+      - run: cmake --build build/node --parallel
+
+  sanitizers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: >-
+          cmake -S cpp -B build/sanitizers
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCULT_BUILD_BENCHMARKS=OFF
+          -DCULT_ENABLE_SANITIZERS=ON
+      - run: cmake --build build/sanitizers --parallel
+      - run: ctest --test-dir build/sanitizers --output-on-failure
+
+  unicode-fuzz:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: >-
+          cmake -S cpp -B build/fuzz
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCULT_BUILD_BENCHMARKS=OFF
+          -DCULT_ENABLE_SANITIZERS=ON
+      - run: cmake --build build/fuzz --parallel
+      - run: ctest --test-dir build/fuzz --output-on-failure

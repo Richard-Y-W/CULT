@@ -1,12 +1,19 @@
 # CULT
 
-> We trade how the internet expresses itself.
+> We measure and trade how the internet expresses itself.
 
-CULT is a simulated market for expressions: emoji, emoticons, acronyms, slang, and short reaction phrases. It is not a prediction market, meme-stock clone, cryptocurrency, or measure of what humanity feels. V0 is a working, synthetic-data vertical slice with fake currency and no financial value.
+CULT is a simulated market for emoji, emoticons, acronyms, slang, and reaction phrases. It is not a prediction market, cryptocurrency, real-money exchange, measure of humanity, or claim to observe the whole internet. The joke is the underlying asset; the measurement and accounting are intended to withstand inspection.
 
-## Current state
+## Exact current state
 
-The Casual experience includes live-style expression cards, reference index versus market price, annotated history, BUY/SHORT tickets, portfolio P&L, cultural indexes, and a time-weighted-return leaderboard. `/terminal` adds platform and semantic decomposition, momentum, volatility, correlations, pair statistics, and a functional momentum backtest. The API and domain packages are typed; accounting is ledger-based; PostgreSQL has a complete initial schema. Runtime state is intentionally in-memory in V0, while database migrations establish the persistence contract.
+| Classification | Available now |
+|---|---|
+| **LIVE** | Authorized public Bluesky Jetstream collector; 30-emoji Unicode 17.0 registry; aggregate-only one-minute persistence/replay; source health, prevalence, author concentration, and provisional one-source reference inputs. Requires `CULT_DATA_MODE=live` and PostgreSQL. |
+| **SYNTHETIC** | Default deterministic 365-day product; Casual trading, reference/market charts, portfolio, leaderboard, curated indexes, semantic/platform decomposition, pair analysis, and momentum backtest. |
+| **EXPERIMENTAL** | C++20 streaming quant core, C++ backtester/risk/liquidity model, Node-API and pybind11 boundaries, data-quality components, PCA/lead-lag/market-factor research, and CEV realized expression volatility. |
+| **NOT IMPLEMENTED** | Cross-platform empirical index, real semantic classifier, finalized empirical daily closes, production identity/billing, full PostgreSQL trading repositories, real money, derivatives, or claims of representativeness. |
+
+Empirical Phase 2 output is explicitly **COIP coverage: 1 source / PROVISIONAL**. Semantic inference never enters the reference count.
 
 ## Quick start
 
@@ -17,9 +24,9 @@ npm run setup
 npm run dev
 ```
 
-Open http://localhost:5173. The local account `demo@cult.local` is pre-authenticated with the `ANALYST` tier and 10,000 CULT. API health is at http://localhost:4100/health.
+Open http://localhost:5173. The local Analyst demo account begins with 10,000 CULT. API health is http://localhost:4100/health. Synthetic mode is the safe deterministic default.
 
-Optional PostgreSQL:
+PostgreSQL infrastructure:
 
 ```bash
 docker compose up -d
@@ -27,9 +34,38 @@ npm run db:migrate
 npm run db:seed
 ```
 
-Docker Desktop (or another running Docker daemon) must be available for the Compose command. V0’s demo runtime does not require PostgreSQL; see known limitations for the persistence status.
+Generate and verify data:
 
-Quality commands:
+```bash
+npm run generate:unicode
+npm run generate:synthetic
+npm run worker
+npm run replay -- data/replays/bluesky/2026-08-21.jsonl
+```
+
+`npm run worker` consumes the recorded fixture in default synthetic mode. Live collection is explicit:
+
+```bash
+CULT_DATA_MODE=live DATABASE_URL=postgresql://cult:cult@localhost:5432/cult npm run worker
+```
+
+`npm run smoke:live` optionally validates one public Jetstream event without persistence or printing its text/actor identifier. It is manual and never part of CI.
+
+The live worker stores aggregate observations, watermarks, and health—not handles, profiles, DIDs, or post bodies.
+
+## C++ quant core
+
+```bash
+cmake -S cpp -B build/cpp -DCMAKE_BUILD_TYPE=Release
+cmake --build build/cpp
+ctest --test-dir build/cpp --output-on-failure
+build/cpp/cult_benchmarks 1000000
+npm run test:differential
+```
+
+Targets are `cult_core`, `cult_expression`, `cult_analytics`, `cult_index`, `cult_market`, and `cult_backtest`. TypeScript remains the product layer and golden implementation while native calls migrate behind parity tests. Optional Node-API and Python build instructions are in [native bindings](docs/architecture/native-bindings.md).
+
+## Quality commands
 
 ```bash
 npm test
@@ -37,27 +73,21 @@ npm run lint
 npm run typecheck
 npm run build
 npm run generate:synthetic
-npm run smoke # while npm run dev is running
+npm run smoke       # while npm run dev is running
 ```
 
-`generate:synthetic` writes the deterministic dataset to `data/synthetic/market-v0.json` using seed `20260821`.
+The test suite includes market accounting, indexes, analytics, Unicode edge cases, hostile UTF-8 properties, ingestion fixtures, deterministic replay, backtest look-ahead protection, and C++/TypeScript differential checks. CI additionally runs PostgreSQL migration/seed, GCC, Clang, and ASan/UBSan jobs without live network dependencies.
 
 ## Architecture
 
-This npm-workspaces monorepo contains:
+```text
+public events → validation → Unicode registry → window aggregates
+             → source/quality diagnostics → reference index
+             → analytics + simulated market → Casual / Analyst UI
+```
 
-- `apps/web`: React/Vite Casual and Analyst experiences
-- `apps/api`: versioned Node HTTP API, validation, dev session, and demo runtime
-- `packages/expression-engine`: normalization, objective metrics, semantic interface, synthetic generator
-- `packages/market-engine`: quotes, fills, positions, short accounting, fees, and append-only ledger
-- `packages/index-engine`: weights, caps, immutable compositions, and index values
-- `packages/analytics`: returns, risk statistics, pairs, and backtests
-- `packages/db`: PostgreSQL migration and exact-money conversion boundary
+The market depends on the measurement system; the measurement system does not depend on the market. PostgreSQL is the live system of record, JSONL is aggregate replay, Parquet is the research interchange format, C++ is compute, Python is research, and TypeScript is product/API.
 
-The core boundary is inviolable: observed usage produces the Expression Index; semantic inference is analysis only; users transact at a separate simulated Market Price.
+Start with [COIP methodology](docs/methodology/coip.md), [system overview](docs/architecture/system-overview.md), [Phase 2 audit](docs/audits/phase2-starting-state.md), [known limitations](docs/KNOWN_LIMITATIONS.md), and [roadmap](ROADMAP.md).
 
-## Screenshots
-
-Screenshots will be added after the first visual QA pass. The application itself is the authoritative V0 demo.
-
-Read [system overview](docs/architecture/system-overview.md), [methodology](docs/methodology/expression-index.md), [known limitations](docs/KNOWN_LIMITATIONS.md), and [roadmap](ROADMAP.md).
+CULT currency has no cash value, redemption, transfer, prize, blockchain, or financial return.

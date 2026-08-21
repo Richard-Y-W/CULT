@@ -1,0 +1,18 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "pybind11>=2.13"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "cult-research"
+version = "0.2.0"
+description = "Reproducible research tools for CULT expression measurements"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2.0", "pandas>=2.2", "pyarrow>=17"]
+
+[project.optional-dependencies]
+plots = ["matplotlib>=3.9"]
+
+[tool.scikit-build]
+cmake.source-dir = "../cpp"
+cmake.args = ["-DCULT_BUILD_PYTHON_BINDING=ON", "-DCULT_BUILD_TESTS=OFF", "-DCULT_BUILD_BENCHMARKS=OFF"]
+wheel.packages = ["cult_research"]

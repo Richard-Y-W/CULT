@@ -1,3 +1,3 @@
-# Worker
+# CULT data worker
 
-The V0 worker boundary owns scheduled aggregation, index snapshots, rankings, and synthetic updates. These jobs run in-process during the demo; this directory is the extraction point for a persistent queue when live sources arrive.
+The worker runs in deterministic `synthetic` mode by default. `CULT_DATA_MODE=live` connects to the authorized public Bluesky Jetstream endpoint, requires `DATABASE_URL`, processes post text transiently, persists aggregate windows and source state, and writes aggregate-only replay batches. See the source methodology before operating live mode.

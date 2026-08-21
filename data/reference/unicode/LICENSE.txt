@@ -1,0 +1,6 @@
+Unicode Emoji data files are copyright © 1991–2026 Unicode, Inc. and distributed under the Unicode License v3 (SPDX: Unicode-3.0).
+
+Source terms: https://www.unicode.org/copyright.html
+License FAQ: https://www.unicode.org/faq/unicode_license.html
+
+The files in this directory retain their original headers and notices. CULT pins unmodified upstream data inputs and generates a smaller project-specific registry from them.

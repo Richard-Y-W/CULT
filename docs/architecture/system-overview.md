@@ -10,9 +10,12 @@ flowchart LR
   M --> DB[(PostgreSQL)]
   E --> DB
   I --> DB
-  W[Worker boundary] --> E
+  J[Bluesky Jetstream] --> W[Live worker]
+  W --> E
   W --> I
   W --> DB
 ```
 
-V0 runs the API as a modular monolith. Domain packages have no UI dependencies and expose replacement boundaries for data sources and execution. Runtime demo state is memory-backed; the PostgreSQL schema is ready for repository adapters in the next phase. This choice makes the entire product runnable without pretending operational complexity is product value.
+The product/API remains a TypeScript modular monolith. Live measurements flow through an aggregate-only worker into PostgreSQL; default demo trading remains memory-backed. Quantitative primitives are migrating behind parity tests into modular C++20 libraries, with coarse Node-API and Python research boundaries. Domain packages have no UI dependencies.
+
+The dependency direction is strict: sources create objective aggregates and references; analytics and the simulated market consume them. Semantic inference and user trading can never alter official expression counts.

@@ -1,0 +1,12 @@
+#include "cult/expression/metrics.hpp"
+#include <algorithm>
+#include <cmath>
+#include <numeric>
+#include <stdexcept>
+
+namespace cult::expression {
+Prevalence prevalence(std::uint64_t n,std::uint64_t total){if(n>total)throw std::invalid_argument("expression documents cannot exceed eligible documents");if(total==0)return{};const double nd=static_cast<double>(n),N=static_cast<double>(total),raw=nd/N,smooth=(nd+0.5)/(N+1.0);return{raw,raw*1'000'000.0,smooth,smooth*1'000'000.0};}
+double log_prevalence_return(double current,double previous){if(current<=0.0||previous<=0.0)throw std::domain_error("smoothed probabilities must be positive");return std::log(current/previous);}
+DirectionalSignals signals(std::span<const double> returns,std::span<const double> weights,std::span<const double> recent,double previous_velocity){if(returns.size()!=weights.size()||returns.empty())throw std::invalid_argument("platform returns and weights must be non-empty and aligned");const double weight_sum=std::accumulate(weights.begin(),weights.end(),0.0);if(weight_sum<=0.0)throw std::invalid_argument("platform weights must sum positive");double v=0.0,b=0.0,sb=0.0;for(std::size_t i=0;i<returns.size();++i){if(weights[i]<0.0)throw std::invalid_argument("platform weights must be nonnegative");const double w=weights[i]/weight_sum;v+=w*returns[i];if(returns[i]>0.0)b+=w;sb+=w*static_cast<double>((returns[i]>0.0)-(returns[i]<0.0));}double p=0.0;for(double x:recent)p+=static_cast<double>((x>0.0)-(x<0.0));p=recent.empty()?0.0:p/static_cast<double>(recent.size());return{v,v-previous_velocity,b,sb,p,std::abs(p)};}
+AuthorConcentration author_concentration(std::span<const std::uint64_t> counts){if(counts.empty())return{};std::vector<std::uint64_t> sorted(counts.begin(),counts.end());std::sort(sorted.begin(),sorted.end(),std::greater<>());const std::uint64_t total=std::accumulate(sorted.begin(),sorted.end(),std::uint64_t{0});if(total==0)return{};long double squares=0.0L;for(const auto c:sorted)squares+=static_cast<long double>(c)*static_cast<long double>(c);const auto top_count=std::min<std::size_t>(10,sorted.size());const std::uint64_t top=std::accumulate(sorted.begin(),sorted.begin()+static_cast<std::ptrdiff_t>(top_count),std::uint64_t{0});const double td=static_cast<double>(total);return{total,static_cast<std::uint64_t>(sorted.size()),static_cast<double>(sorted.front())/td,static_cast<double>(top)/td,static_cast<double>(static_cast<long double>(total)*static_cast<long double>(total)/squares)};}
+}
