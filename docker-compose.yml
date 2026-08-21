@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: cult
+      POSTGRES_PASSWORD: cult
+      POSTGRES_DB: cult
+    ports: ["5432:5432"]
+    volumes: ["cult_postgres:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cult"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+volumes:
+  cult_postgres:

@@ -1,0 +1,1 @@
+{"name":"@cult/api","version":"0.1.0","private":true,"type":"module","scripts":{"dev":"tsx watch src/server.ts","build":"tsc -b","start":"node dist/server.js"},"dependencies":{"@cult/shared":"*","@cult/expression-engine":"*","@cult/index-engine":"*","@cult/market-engine":"*","@cult/analytics":"*","zod":"^4.1.5"}}

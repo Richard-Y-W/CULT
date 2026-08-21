@@ -1,0 +1,1 @@
+{"extends":"../../tsconfig.base.json","compilerOptions":{"outDir":"dist-types","rootDir":".","jsx":"react-jsx","declaration":true,"composite":true,"lib":["ES2022","DOM","DOM.Iterable"]},"include":["src","vite.config.ts"],"references":[{"path":"../../packages/shared"}]}
