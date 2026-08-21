@@ -40,6 +40,8 @@ jobs:
       - run: npm run hft:demo
       - run: npm run replay:hft -- data/synthetic/phase4/great-cry.json
       - run: npm run build
+      - run: docker compose --profile live-shadow config
+      - run: docker build -f docker/Dockerfile.worker -t cult-worker:ci .
 
   cpp:
     strategy:
