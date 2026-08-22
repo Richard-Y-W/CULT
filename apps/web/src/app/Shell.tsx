@@ -1,8 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ASSETS } from "@cult/shared";
-import { ensureRealtimeConnected, useConnectionState } from "../realtime/marketStore.js";
+import { ErrorBoundary } from "./ErrorBoundary.js";
+import {
+  ensureRealtimeConnected,
+  useConnectionState,
+  useMarketDataMode,
+} from "../realtime/marketStore.js";
 import type { ConnectionState } from "../realtime/connectionManager.js";
+import type { CultDataMode } from "@cult/hft-engine";
 
 const MODES = [
   { path: "/trade", label: "Trade" },
@@ -10,18 +16,35 @@ const MODES = [
   { path: "/quant", label: "Quant" },
 ] as const;
 
+// STREAM STATUS (is the WebSocket connected) and DATA MODE (is the data it
+// carries synthetic, replayed, or live-shadow) are deliberately rendered as
+// two separate facts. A connected socket says nothing about data
+// authenticity -- collapsing them into one "LIVE FEED" label regardless of
+// dataMode was a real pre-live-readiness finding (a connected synthetic
+// session and a connected live-shadow session were visually identical).
+const STREAM_LABEL: Record<ConnectionState, string> = {
+  CONNECTED: "STREAM: CONNECTED",
+  DEGRADED: "STREAM: DEGRADED",
+  RECONNECTING: "STREAM: RECONNECTING",
+  DISCONNECTED: "STREAM: DISCONNECTED",
+};
+const DATA_LABEL: Record<CultDataMode, string> = {
+  synthetic: "DATA: SYNTHETIC",
+  replay: "DATA: REPLAY",
+  "live-shadow": "DATA: LIVE SHADOW",
+  "live-market": "DATA: LIVE MARKET",
+};
+
 function ConnectionIndicator() {
   const state = useConnectionState();
-  const label: Record<ConnectionState, string> = {
-    CONNECTED: "LIVE FEED",
-    DEGRADED: "FEED DEGRADED",
-    RECONNECTING: "RECONNECTING",
-    DISCONNECTED: "DISCONNECTED",
-  };
+  const dataMode = useMarketDataMode();
   return (
     <div className={`connection-indicator connection-${state.toLowerCase()}`}>
       <i />
-      <span>{label[state]}</span>
+      <span>{STREAM_LABEL[state]}</span>
+      <span className="connection-datamode">
+        {dataMode ? DATA_LABEL[dataMode] : "DATA: —"}
+      </span>
     </div>
   );
 }
@@ -81,6 +104,7 @@ function AssetSearch({ open, onClose }: { open: boolean; onClose: () => void }) 
 
 export function Shell() {
   const [searchOpen, setSearchOpen] = useState(false);
+  const location = useLocation();
   useEffect(() => {
     ensureRealtimeConnected();
   }, []);
@@ -116,7 +140,9 @@ export function Shell() {
         <ConnectionIndicator />
       </header>
       <AssetSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <Outlet />
+      <ErrorBoundary key={location.pathname}>
+        <Outlet />
+      </ErrorBoundary>
       <footer>
         <b>CULT</b>
         <span>Simulated markets for internet expression.</span>

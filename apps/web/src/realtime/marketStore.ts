@@ -24,6 +24,13 @@ export interface PricePoint {
 
 interface MarketStoreState {
   connectionState: ConnectionState;
+  // The most recently received tick's `dataMode` -- distinct from
+  // `connectionState`, which only reflects whether the WebSocket itself is
+  // connected. A connected socket says nothing about whether the data it
+  // carries is synthetic, replayed, or derived from live-shadow collection;
+  // conflating the two is exactly the "LIVE FEED just because WS connected"
+  // mislabeling a pre-live audit must catch. `null` until the first tick.
+  dataMode: CultDataMode | null;
   instrumentsById: Record<string, InstrumentTick>;
   historyByAssetId: Record<string, PricePoint[]>;
 }
@@ -35,6 +42,7 @@ const MAX_HISTORY_POINTS = 600;
 
 export const useMarketStore = create<MarketStoreState>(() => ({
   connectionState: "DISCONNECTED",
+  dataMode: null,
   instrumentsById: {},
   historyByAssetId: {},
 }));
@@ -59,6 +67,7 @@ export function ensureRealtimeConnected() {
             { timeSec: Math.floor(nowMs / 1000), value: tick.price },
           ].slice(-MAX_HISTORY_POINTS);
         return {
+          dataMode: tick.dataMode,
           instrumentsById: {
             ...state.instrumentsById,
             [tick.assetId]: {
@@ -89,6 +98,11 @@ export function useInstrument(assetId: string): InstrumentTick | undefined {
 
 export function useConnectionState(): ConnectionState {
   return useMarketStore((state) => state.connectionState);
+}
+
+/** The live tick feed's own data provenance -- see MarketStoreState.dataMode. */
+export function useMarketDataMode(): CultDataMode | null {
+  return useMarketStore((state) => state.dataMode);
 }
 
 const EMPTY_HISTORY: PricePoint[] = [];

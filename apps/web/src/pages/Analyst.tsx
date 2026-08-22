@@ -184,15 +184,15 @@ export function Analyst() {
               dark
             />
             <div className="term-kpis">
-              <TermKpi label="1D" value={pct(asset.analytics.momentum.d1 * 100)} />
-              <TermKpi label="7D" value={pct(asset.analytics.momentum.d7 * 100)} />
-              <TermKpi label="30D" value={pct(asset.analytics.momentum.d30 * 100)} />
-              <TermKpi label="90D" value={pct(asset.analytics.momentum.d90 * 100)} />
+              <TermKpi label="1D" value={pct(asset.analytics?.momentum?.d1 * 100)} />
+              <TermKpi label="7D" value={pct(asset.analytics?.momentum?.d7 * 100)} />
+              <TermKpi label="30D" value={pct(asset.analytics?.momentum?.d30 * 100)} />
+              <TermKpi label="90D" value={pct(asset.analytics?.momentum?.d90 * 100)} />
               <TermKpi
                 label="VOL30"
-                value={(asset.analytics.volatility.d30 * 100).toFixed(2)}
+                value={asset.analytics?.volatility?.d30 != null ? (asset.analytics.volatility.d30 * 100).toFixed(2) : "N/A"}
               />
-              <TermKpi label="BETA" value={asset.analytics.betaHeart.toFixed(2)} />
+              <TermKpi label="BETA" value={asset.analytics?.betaHeart?.toFixed(2) ?? "N/A"} />
             </div>
           </div>
           <div className="term-tabs">

@@ -18,6 +18,22 @@ export class PostgresAggregateSink implements AggregateSink {
   private readonly db;
   constructor(connectionString: string) {
     this.db = new pg.Client({ connectionString });
+    // pg.Client emits 'error' on an unexpected connection loss (dropped
+    // backend, network blip); an unhandled EventEmitter 'error' crashes the
+    // process with a raw, unstructured exception. Log it in the same
+    // structured shape as the rest of the worker, then exit deliberately --
+    // under `restart: unless-stopped` this reconnects with clean diagnostics
+    // instead of an opaque uncaught-exception crash.
+    this.db.on("error", (error) => {
+      console.error(
+        JSON.stringify({
+          level: "error",
+          message: "database connection error",
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      );
+      process.exit(1);
+    });
   }
   async connect() {
     await this.db.connect();
@@ -99,7 +115,30 @@ export class PostgresAggregateSink implements AggregateSink {
 export class CompositeSink implements AggregateSink {
   constructor(private readonly sinks: AggregateSink[]) {}
   async write(batch: AggregateBatch) {
-    for (const sink of this.sinks) await sink.write(batch);
+    // Attempt every sink even if one fails, so (for example) a transient
+    // PostgreSQL outage does not also prevent the local durable ReplaySink
+    // append -- the aggregate window would otherwise be lost from both the
+    // database and disk with no recovery path. Only throw once all sinks
+    // have been attempted, and only if every one of them failed.
+    const errors: unknown[] = [];
+    for (const sink of this.sinks) {
+      try {
+        await sink.write(batch);
+      } catch (error) {
+        errors.push(error);
+        console.error(
+          JSON.stringify({
+            level: "error",
+            message: "sink write failed",
+            sink: sink.constructor.name,
+            windowStart: batch.windowStart,
+            error: error instanceof Error ? error.message : String(error),
+          }),
+        );
+      }
+    }
+    if (errors.length === this.sinks.length && errors.length > 0)
+      throw errors[0];
   }
   async close() {
     for (const sink of this.sinks) await sink.close();

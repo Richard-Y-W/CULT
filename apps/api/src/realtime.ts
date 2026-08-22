@@ -2,7 +2,7 @@ import type { Server as HttpServer } from "node:http";
 import { WebSocketServer, WebSocket } from "ws";
 import { ASSETS } from "@cult/shared";
 import { VirtualLiquidityProvider } from "@cult/market-engine";
-import type { CultDataMode, FeedEnvelope, MarketTickPayload } from "@cult/hft-engine";
+import type { FeedEnvelope, MarketTickPayload } from "@cult/hft-engine";
 
 interface TickerState {
   reference: number;
@@ -66,7 +66,7 @@ export class MarketTickEngine {
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   }
 
-  tick(dataMode: CultDataMode): MarketTickPayload[] {
+  tick(): MarketTickPayload[] {
     const output: MarketTickPayload[] = [];
     for (const asset of ASSETS) {
       const state = this.states.get(asset.id);
@@ -85,7 +85,14 @@ export class MarketTickEngine {
         changePercent: Number(
           (((result.mid - state.previousClose) / state.previousClose) * 100).toFixed(2),
         ),
-        dataMode,
+        // Always "synthetic": this engine's price math is unconditionally a
+        // deterministic PRNG (see class docstring) regardless of the
+        // worker's CULT_DATA_MODE. Stamping the ingestion mode here would
+        // let a live-shadow deployment label fabricated prices "LIVE" --
+        // exactly the mislabeling a pre-live audit must catch. Once a real
+        // live-shadow/live-market price driver exists, this should report
+        // its own true provenance, not borrow the ingestion mode.
+        dataMode: "synthetic",
       });
     }
     return output;
@@ -96,10 +103,7 @@ const HEARTBEAT_INTERVAL_MS = 15_000;
 const TICK_INTERVAL_MS = 1_000;
 
 /** Attaches a `/ws` WebSocket endpoint to an existing http.Server. */
-export function attachRealtimeServer(
-  server: HttpServer,
-  getDataMode: () => CultDataMode,
-) {
+export function attachRealtimeServer(server: HttpServer) {
   const wss = new WebSocketServer({ noServer: true }),
     engine = new MarketTickEngine();
   let sequence = 0;
@@ -139,8 +143,7 @@ export function attachRealtimeServer(
 
   const tickTimer = setInterval(() => {
     if (!wss.clients.size) return;
-    const dataMode = getDataMode();
-    for (const payload of engine.tick(dataMode))
+    for (const payload of engine.tick())
       broadcast({
         schemaVersion: "CULT-FEED-1",
         channel: "market",

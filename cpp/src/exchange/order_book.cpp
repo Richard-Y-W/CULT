@@ -24,22 +24,41 @@ bool LimitOrderBook::marketable(const OrderRequest &request) const {
 }
 
 Quantity LimitOrderBook::available(const OrderRequest &request) const {
+  // Must mirror submit()'s matching walk exactly, including how it reacts to
+  // the requester's own resting orders, or a fill_or_kill precheck here can
+  // pass while the real match (below) hits self-trade prevention partway
+  // through and only partially fills -- breaking FOK's all-or-nothing
+  // guarantee. Under cancel_newest/cancel_both, submit() stops matching the
+  // instant it reaches the requester's own order, so no liquidity behind it
+  // is actually reachable; only cancel_oldest removes the self-order and
+  // keeps walking past it.
+  const bool stop_at_own_order = config_.stp_mode != StpMode::cancel_oldest;
   Quantity result = 0;
   if (request.side == Side::buy) {
     for (const auto &[price, orders] : asks_) {
       if (request.type == OrderType::limit && price > request.price_ticks)
         break;
-      for (const auto &order : orders)
-        if (order.agent_id != request.agent_id)
-          result += order.remaining_quantity;
+      for (const auto &order : orders) {
+        if (order.agent_id == request.agent_id) {
+          if (stop_at_own_order)
+            return result;
+          continue;
+        }
+        result += order.remaining_quantity;
+      }
     }
   } else {
     for (const auto &[price, orders] : bids_) {
       if (request.type == OrderType::limit && price < request.price_ticks)
         break;
-      for (const auto &order : orders)
-        if (order.agent_id != request.agent_id)
-          result += order.remaining_quantity;
+      for (const auto &order : orders) {
+        if (order.agent_id == request.agent_id) {
+          if (stop_at_own_order)
+            return result;
+          continue;
+        }
+        result += order.remaining_quantity;
+      }
     }
   }
   return result;

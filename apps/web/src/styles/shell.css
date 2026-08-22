@@ -91,6 +91,37 @@
 .connection-disconnected i {
   background: var(--critical);
 }
+.connection-datamode {
+  padding-left: 6px;
+  border-left: 1px solid var(--border-subtle);
+  color: var(--text-subtle, var(--text-muted));
+}
+.render-error {
+  max-width: 480px;
+  margin: 64px auto;
+  padding: var(--space-4, 20px);
+  border: 1px solid var(--critical);
+  border-radius: var(--radius-md, 8px);
+  text-align: center;
+}
+.render-error h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+.render-error p {
+  color: var(--text-muted);
+  font: 12px var(--font-mono);
+  word-break: break-word;
+}
+.render-error button {
+  margin-top: 12px;
+  padding: 6px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm, 4px);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
 
 .search-overlay {
   position: fixed;

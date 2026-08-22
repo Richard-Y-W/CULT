@@ -7,7 +7,7 @@
     "exchangeConfig": "CULT-X-1",
     "signalMethodology": "CULT-BEHAVIOR-1",
     "mode": "SYNTHETIC",
-    "outputHash": "c0e6400d921dcc4d38161bb2bbeaaefc820de28231c3d90ddf09e694ba2e0650"
+    "outputHash": "7793b5bcae7743f47f07bb4b32639c54c9a5267a0e50afa362b8b8e492296f23"
   },
   "expressionTape": [
     {
@@ -2926,7 +2926,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 1,
-      "priceTicks": 1000,
+      "priceTicks": 999,
       "quantity": 1000
     },
     {
@@ -2934,7 +2934,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 1,
-      "priceTicks": 1000,
+      "priceTicks": 999,
       "quantity": 1000
     },
     {
@@ -2942,7 +2942,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 2,
-      "priceTicks": 1002,
+      "priceTicks": 1001,
       "quantity": 1000
     },
     {
@@ -2950,7 +2950,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 2,
-      "priceTicks": 1002,
+      "priceTicks": 1001,
       "quantity": 1000
     },
     {
@@ -2958,7 +2958,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 3,
-      "priceTicks": 999,
+      "priceTicks": 998,
       "quantity": 1000
     },
     {
@@ -2966,7 +2966,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 3,
-      "priceTicks": 999,
+      "priceTicks": 998,
       "quantity": 1000
     },
     {
@@ -2974,7 +2974,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 4,
-      "priceTicks": 1003,
+      "priceTicks": 1002,
       "quantity": 1000
     },
     {
@@ -2982,7 +2982,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 4,
-      "priceTicks": 1003,
+      "priceTicks": 1002,
       "quantity": 1000
     },
     {
@@ -2990,7 +2990,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 5,
-      "priceTicks": 998,
+      "priceTicks": 997,
       "quantity": 1000
     },
     {
@@ -2998,7 +2998,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 5,
-      "priceTicks": 998,
+      "priceTicks": 997,
       "quantity": 1000
     },
     {
@@ -3006,7 +3006,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 6,
-      "priceTicks": 1004,
+      "priceTicks": 1003,
       "quantity": 1000
     },
     {
@@ -3014,7 +3014,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 6,
-      "priceTicks": 1004,
+      "priceTicks": 1003,
       "quantity": 1000
     },
     {
@@ -3022,7 +3022,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 7,
-      "priceTicks": 997,
+      "priceTicks": 996,
       "quantity": 1000
     },
     {
@@ -3030,7 +3030,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 7,
-      "priceTicks": 997,
+      "priceTicks": 996,
       "quantity": 1000
     },
     {
@@ -3038,7 +3038,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 8,
-      "priceTicks": 1005,
+      "priceTicks": 1004,
       "quantity": 1000
     },
     {
@@ -3046,7 +3046,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 8,
-      "priceTicks": 1005,
+      "priceTicks": 1004,
       "quantity": 1000
     },
     {
@@ -3054,7 +3054,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 9,
-      "priceTicks": 996,
+      "priceTicks": 995,
       "quantity": 1000
     },
     {
@@ -3062,7 +3062,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 9,
-      "priceTicks": 996,
+      "priceTicks": 995,
       "quantity": 1000
     },
     {
@@ -3070,7 +3070,7 @@
       "exchangeTimeNs": "0",
       "type": "ORDER_ACCEPTED",
       "orderId": 10,
-      "priceTicks": 1006,
+      "priceTicks": 1005,
       "quantity": 1000
     },
     {
@@ -3078,7 +3078,7 @@
       "exchangeTimeNs": "0",
       "type": "BOOK_UPDATE",
       "orderId": 10,
-      "priceTicks": 1006,
+      "priceTicks": 1005,
       "quantity": 1000
     },
     {
@@ -3095,7 +3095,7 @@
       "type": "TRADE",
       "orderId": 11,
       "contraOrderId": 2,
-      "priceTicks": 1002,
+      "priceTicks": 1001,
       "quantity": 1000,
       "aggressorSide": "BUY"
     },
@@ -3105,7 +3105,7 @@
       "type": "TRADE",
       "orderId": 11,
       "contraOrderId": 4,
-      "priceTicks": 1003,
+      "priceTicks": 1002,
       "quantity": 259,
       "aggressorSide": "BUY"
     }
@@ -3113,8 +3113,8 @@
   "state": {
     "expression": "expr_crying_face",
     "reference": 1006.998333,
-    "market": 1001.5,
-    "basisPercent": -0.00546,
+    "market": 1000.5,
+    "basisPercent": -0.006453,
     "prevalenceDocuments": 80,
     "creationFlow": 80,
     "likeFlow": 800,
@@ -3129,11 +3129,11 @@
     "dataLiquidityTier": "TIER_2_FAST"
   },
   "microstructure": {
-    "bid": 1000,
-    "ask": 1003,
-    "midpoint": 1001.5,
+    "bid": 999,
+    "ask": 1002,
+    "midpoint": 1000.5,
     "spreadTicks": 3,
-    "microprice": 1001.723148,
+    "microprice": 1000.723148,
     "imbalanceL1": 0.148765,
     "imbalanceL5": 0,
     "tradeImbalance": 1,
@@ -3141,23 +3141,13 @@
     "depth": [
       {
         "side": "BID",
-        "priceTicks": 1000,
-        "quantity": 1000
-      },
-      {
-        "side": "ASK",
-        "priceTicks": 1002,
-        "quantity": 0
-      },
-      {
-        "side": "BID",
         "priceTicks": 999,
         "quantity": 1000
       },
       {
         "side": "ASK",
-        "priceTicks": 1003,
-        "quantity": 741
+        "priceTicks": 1001,
+        "quantity": 0
       },
       {
         "side": "BID",
@@ -3166,8 +3156,8 @@
       },
       {
         "side": "ASK",
-        "priceTicks": 1004,
-        "quantity": 1000
+        "priceTicks": 1002,
+        "quantity": 741
       },
       {
         "side": "BID",
@@ -3176,7 +3166,7 @@
       },
       {
         "side": "ASK",
-        "priceTicks": 1005,
+        "priceTicks": 1003,
         "quantity": 1000
       },
       {
@@ -3186,7 +3176,17 @@
       },
       {
         "side": "ASK",
-        "priceTicks": 1006,
+        "priceTicks": 1004,
+        "quantity": 1000
+      },
+      {
+        "side": "BID",
+        "priceTicks": 995,
+        "quantity": 1000
+      },
+      {
+        "side": "ASK",
+        "priceTicks": 1005,
         "quantity": 1000
       }
     ]
@@ -3195,24 +3195,24 @@
     "state": "NORMAL",
     "killed": false,
     "decision": "ACCEPT",
-    "grossExposure": 1260888.5,
-    "netExposure": 1260888.5,
-    "leverage": 0.126089,
-    "marginUtilization": 0.037827
+    "grossExposure": 1259629.5,
+    "netExposure": 1259629.5,
+    "leverage": 0.125963,
+    "marginUtilization": 0.037789
   },
   "heatmaps": {
     "depth": {
       "x": [
-        "1000",
-        "1002",
         "999",
-        "1003",
+        "1001",
         "998",
-        "1004",
+        "1002",
         "997",
-        "1005",
+        "1003",
         "996",
-        "1006"
+        "1004",
+        "995",
+        "1005"
       ],
       "y": [
         "quantity"

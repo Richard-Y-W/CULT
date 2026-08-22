@@ -65,7 +65,9 @@ const health: SourceHealth = {
 };
 let receivedThisMinute = 0,
   stopping = false,
-  sink: AggregateSink;
+  sink: AggregateSink,
+  activeSocket: WebSocket | null = null,
+  lastCursor = 0;
 const replayPath = fromRoot(
   process.env.CULT_REPLAY_PATH ??
     `data/replays/bluesky/${new Date().toISOString().slice(0, 10)}.jsonl`,
@@ -87,6 +89,7 @@ async function flush() {
   health.eligibleEngagementEvents = attribution.eligibleEngagementEvents;
   const batch = aggregator.flush(health);
   if (!batch) return;
+  lastCursor = batch.cursor;
   await sink.write(batch);
   await writeCheckpoint(
     checkpointPath,
@@ -100,6 +103,34 @@ async function flush() {
       eligibleDocuments: batch.observations[0]?.eligibleDocuments ?? 0,
       cursor: batch.cursor,
       state: batch.health.state,
+    }),
+  );
+}
+// Persists health/watermark state with zero observations when there is no
+// open aggregation window to flush -- otherwise a source that goes silent
+// without an aggregate window in progress (e.g. between eligible documents)
+// never gets its STALE transition written to source_health_snapshots_v2,
+// and /api/v1/data/status keeps serving the last-written HEALTHY row
+// indefinitely (see docs/audits/pre-live-readiness.md, "STALE never
+// reaches the database" finding).
+async function flushHealthOnly() {
+  health.mappedEngagementEvents = attribution.mappedEngagementEvents;
+  health.eligibleEngagementEvents = attribution.eligibleEngagementEvents;
+  const windowStart = Math.floor(Date.now() / 60_000) * 60_000;
+  await sink.write({
+    source: "BLUESKY",
+    windowStart: new Date(windowStart).toISOString(),
+    windowEnd: new Date(windowStart + 60_000).toISOString(),
+    cursor: lastCursor,
+    observedAt: new Date().toISOString(),
+    health,
+    observations: [],
+  });
+  console.log(
+    JSON.stringify({
+      level: "info",
+      message: "health-only snapshot persisted",
+      state: health.state,
     }),
   );
 }
@@ -164,6 +195,7 @@ async function live() {
     if (cursor) query.set("cursor", String(Math.max(0, cursor - 5_000_000)));
     const url = `${process.env.BLUESKY_JETSTREAM_URL ?? "wss://jetstream2.us-east.bsky.network/subscribe"}?${query}`,
       socket = new WebSocket(url, { maxPayload: 1_000_000 });
+    activeSocket = socket;
     try {
       await new Promise<void>((done, reject) => {
         socket.once("open", () => {
@@ -193,6 +225,7 @@ async function live() {
       );
     } finally {
       socket.close();
+      activeSocket = null;
       health.state = "DISCONNECTED";
       health.reconnectCount++;
       await flush();
@@ -206,11 +239,22 @@ async function live() {
 const healthTimer = setInterval(() => {
   health.eventsPerMinute = receivedThisMinute;
   receivedThisMinute = 0;
+  const wasStale = health.state === "STALE";
   if (
     health.lastReceiveTimestampMs !== null &&
     Date.now() - health.lastReceiveTimestampMs > 120_000
   )
     health.state = "STALE";
+  if (health.state === "STALE" && !wasStale && liveSource)
+    void flushHealthOnly().catch((error) =>
+      console.error(
+        JSON.stringify({
+          level: "error",
+          message: "health-only snapshot failed",
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      ),
+    );
 }, 60_000);
 const attributionCleanupTimer = attribution.durable
   ? setInterval(() => {
@@ -229,6 +273,12 @@ const shutdown = () => {
   stopping = true;
   clearInterval(healthTimer);
   if (attributionCleanupTimer) clearInterval(attributionCleanupTimer);
+  // Without this, live()'s reconnect loop only notices `stopping` after the
+  // in-flight socket's own close/error promise settles -- if Jetstream
+  // never sends one, SIGTERM/SIGINT would hang past a container
+  // orchestrator's grace period and get SIGKILLed before the checkpoint/
+  // sink flush in live()'s `finally` block runs.
+  activeSocket?.close();
 };
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);

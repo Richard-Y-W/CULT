@@ -24,9 +24,18 @@ const eventSchema = z.object({
 export class EventDeduplicator {
   private readonly ids = new Map<string, number>();
   constructor(private readonly retentionMs = 3_600_000) {}
+  // Sustained live traffic can hold an hour's worth of ids (hundreds of
+  // thousands under real Jetstream volume); scanning the whole map on every
+  // single event made this O(n) per call, i.e. effectively O(n^2) over an
+  // hour. `Map` preserves insertion order and `now` is non-decreasing in
+  // the live path (receivedAtMs defaults to Date.now()), so with a fixed
+  // retentionMs, expiry order equals insertion order -- prune from the
+  // front and stop at the first still-live entry (amortized O(1)).
   seen(id: string, now: number) {
-    for (const [key, expires] of this.ids)
-      if (expires <= now) this.ids.delete(key);
+    for (const [key, expires] of this.ids) {
+      if (expires > now) break;
+      this.ids.delete(key);
+    }
     if (this.ids.has(id)) return true;
     this.ids.set(id, now + this.retentionMs);
     return false;

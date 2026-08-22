@@ -185,11 +185,15 @@ export function Asset() {
             ))}
             <div>
               <small>VOL 30</small>
-              <strong>{(asset.analytics.volatility.d30 * 100).toFixed(2)}</strong>
+              <strong>
+                {asset.analytics?.volatility?.d30 != null
+                  ? (asset.analytics.volatility.d30 * 100).toFixed(2)
+                  : "N/A"}
+              </strong>
             </div>
             <div>
               <small>DRAWDOWN</small>
-              <strong>{pct(asset.analytics.drawdown * 100)}</strong>
+              <strong>{pct(asset.analytics?.drawdown != null ? asset.analytics.drawdown * 100 : null)}</strong>
             </div>
           </div>
         </section>

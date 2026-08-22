@@ -27,4 +27,5 @@ export function useApi<T>(path: string, initial: T) {
 
 export const money = (n: number) =>
   new Intl.NumberFormat("en-US", { maximumFractionDigits: 2 }).format(n);
-export const pct = (n: number) => `${n >= 0 ? "+" : ""}${n.toFixed(1)}%`;
+export const pct = (n: number | null | undefined) =>
+  n == null || Number.isNaN(n) ? "N/A" : `${n >= 0 ? "+" : ""}${n.toFixed(1)}%`;

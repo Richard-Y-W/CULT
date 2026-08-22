@@ -47,16 +47,20 @@ export class AttributionStore {
       if (this.durable)
         this.pool = new pg.Pool({ connectionString: options.databaseUrl });
     } else {
+      // A live/durable deployment (databaseUrl set) that silently degraded
+      // to a random per-process key would (a) make record_id/cascade_root_id
+      // unrecoverable across restarts -- defeating the entire warm-start
+      // design -- and (b) silently disable durable writes entirely
+      // (recordPost's `this.durable && this.pool` guard below would never
+      // fire), collapsing mappedEngagementRate to 0 with no hard failure.
+      // Fail closed instead of warn-and-degrade, matching the live-shadow
+      // safety gate's "fail closed" requirement.
+      if (options.databaseUrl)
+        throw new Error(
+          "CULT_CASCADE_HASH_SECRET is required for a live/durable deployment (DATABASE_URL is set); refusing to start with a random per-process key",
+        );
       this.key = randomBytes(32);
       this.durable = false;
-      if (options.databaseUrl)
-        console.warn(
-          JSON.stringify({
-            level: "warn",
-            message:
-              "CULT_CASCADE_HASH_SECRET not set; post attribution hashes are process-local and durability/warm-start is disabled this run",
-          }),
-        );
     }
   }
 
@@ -109,7 +113,28 @@ export class AttributionStore {
   }
 
   forgetPost(recordUri: string) {
-    this.cache.delete(this.hash(recordUri));
+    const recordId = this.hash(recordUri);
+    this.cache.delete(recordId);
+    // Without this, restore() would re-load the durable row on the next
+    // warm-start and resurrect attribution for a post this process was
+    // explicitly told to forget (e.g. on DELETE), resolving post-restart
+    // engagement against a post that no longer exists.
+    if (this.durable && this.pool)
+      this.pending.push(
+        this.pool
+          .query(`DELETE FROM post_attribution_map WHERE record_id = $1`, [
+            recordId,
+          ])
+          .catch((error) =>
+            console.error(
+              JSON.stringify({
+                level: "error",
+                message: "post attribution durable delete failed",
+                error: error instanceof Error ? error.message : String(error),
+              }),
+            ),
+          ),
+      );
   }
 
   resolve(uri: string): AttributionResolution {

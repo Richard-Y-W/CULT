@@ -6,8 +6,8 @@ Methodologies: `CULT-BEHAVIOR-1`, `CULT-X-1`
 
 | Scenario | Reference | Market | Basis | Amplification | Cascade HHI | Effective cascades | Trades | Replay hash |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Great Cry Shock | 1006.998333 | 1001.5 | -0.55% | 1195.216925 | 0.0125 | 80 | 2 | `c0e6400d921dcc4d38161bb2bbeaaefc820de28231c3d90ddf09e694ba2e0650` |
-| Celebrity shock | 1000.876118 | 1001 | 0.01% | 343.049288 | 1 | 1 | 1 | `8e8464d0497c1702160ef8b79b36a512ce434103752c19e5963e38984511ad05` |
-| Spam-like shock | 1000.058408 | 1001 | 0.09% | 343.049288 | 1 | 1 | 1 | `72c9f76bf1874985bf2741c51007bf68be9b64160d0445246cc1773eb457ec05` |
+| Great Cry Shock | 1006.998333 | 1000.5 | -0.65% | 1195.216925 | 0.0125 | 80 | 2 | `7793b5bcae7743f47f07bb4b32639c54c9a5267a0e50afa362b8b8e492296f23` |
+| Celebrity shock | 1000.876118 | 1000 | -0.09% | 343.049288 | 1 | 1 | 1 | `84c370e6fac3fec5e687bea06d144aac0cd3a46698cf743cbb127cc4b0059853` |
+| Spam-like shock | 1000.058408 | 1000 | -0.01% | 343.049288 | 1 | 1 | 1 | `a0957f2959ab64149055f9b1f65f0d7d39662f679e9fa289810a9fef18f650f7` |
 
 The scenarios deliberately separate document presence from engagement. Equal-looking engagement is down-weighted by breadth/concentration quality in the spam-like case. These are controlled simulator results, not empirical Bluesky findings.

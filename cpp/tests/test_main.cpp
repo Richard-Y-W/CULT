@@ -228,6 +228,32 @@ int main() {
       3);
   check(!post_only.accepted && post_only.reject_reason == exchange::RejectReason::post_only_would_trade,
         "post only rejects crossing order");
+  {
+    // Regression for a pre-live audit finding: a fill_or_kill order must
+    // never partially fill. Three asks at the same price from three agents,
+    // with the requester's own resting order sandwiched between two others
+    // it does not own. Under cancel_newest (this book's STP mode), matching
+    // stops the instant it reaches the requester's own order, so only the
+    // liquidity ahead of it (30) is actually reachable -- a FOK buy for 50
+    // must be rejected outright, not filled for 30 and killed for 20.
+    exchange::LimitOrderBook fok_book({1, 1, 1, 1, exchange::StpMode::cancel_newest});
+    (void)fok_book.submit({10, 100, exchange::Side::sell, exchange::OrderType::limit,
+                           exchange::TimeInForce::good_til_cancel, 100, 30, false, 0},
+                          0);
+    (void)fok_book.submit({11, 101, exchange::Side::sell, exchange::OrderType::limit,
+                           exchange::TimeInForce::good_til_cancel, 100, 10, false, 1},
+                          1);
+    (void)fok_book.submit({12, 100, exchange::Side::sell, exchange::OrderType::limit,
+                           exchange::TimeInForce::good_til_cancel, 100, 60, false, 2},
+                          2);
+    const auto fok = fok_book.submit({13, 100, exchange::Side::buy, exchange::OrderType::limit,
+                                      exchange::TimeInForce::fill_or_kill, 100, 50, false, 3},
+                                     3);
+    check(!fok.accepted && fok.fills.empty() && fok.filled_quantity == 0 &&
+              fok.reject_reason == exchange::RejectReason::fok_unfilled,
+          "fill_or_kill rejects outright rather than partially filling when self-trade prevention "
+          "would interrupt matching");
+  }
   const auto saved = book.snapshot_state();
   exchange::LimitOrderBook restored({1, 1, 1, 1, exchange::StpMode::cancel_newest});
   restored.restore_state(saved);

@@ -690,7 +690,7 @@ const httpServer = createServer((req, res) => {
       ),
     );
 });
-attachRealtimeServer(httpServer, () => dataMode);
+attachRealtimeServer(httpServer);
 httpServer.listen(port, () =>
   console.log(
     JSON.stringify({ level: "info", message: "CULT API ready", port }),

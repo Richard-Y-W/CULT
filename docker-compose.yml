@@ -36,7 +36,14 @@ services:
       CULT_DATA_MODE: live-shadow
       DATABASE_URL: postgresql://cult:cult@postgres:5432/cult
       BLUESKY_JETSTREAM_URL: ${BLUESKY_JETSTREAM_URL:-wss://jetstream2.us-east.bsky.network/subscribe}
-      CULT_CASCADE_HASH_SECRET: ${CULT_CASCADE_HASH_SECRET:-local-development-only-change-me}
+      # No fallback value: attribution.ts now refuses to start a durable
+      # (DATABASE_URL-configured) deployment without a real secret rather
+      # than silently degrading to a random per-process key. A committed,
+      # publicly-known default here would let anyone compute the same HMAC
+      # key and de-anonymize every record_id/cascade_root_id this profile
+      # ever produces -- set CULT_CASCADE_HASH_SECRET in .env before running
+      # `docker compose --profile live-shadow up`.
+      CULT_CASCADE_HASH_SECRET: ${CULT_CASCADE_HASH_SECRET:?set CULT_CASCADE_HASH_SECRET in .env before running live-shadow}
       CULT_REPLAY_PATH: data/runtime/replays/bluesky.jsonl
       CULT_BEHAVIOR_TAPE_PATH: data/runtime/replays/expression-events.jsonl
       CULT_CHECKPOINT_PATH: data/runtime/checkpoints/bluesky.json
