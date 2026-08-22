@@ -209,8 +209,21 @@ async function live() {
             }),
           );
         });
+        // Serialize message handling: `processMessage` is async, and
+        // MinuteAggregator has no internal locking (it's meant to be
+        // called by one caller at a time). Without this chain, back-to-back
+        // WS messages could run processMessage concurrently and interleave
+        // their flush()/add() calls -- observed live, running this project's
+        // first sustained overnight session: two messages spanning a
+        // minute boundary raced, one flushed the window while the other
+        // was mid-add() for the old window, throwing "Document belongs to
+        // a different minute" and killing the whole connection (forcing a
+        // reconnect) each time it happened.
+        let processingChain = Promise.resolve();
         socket.on("message", (data) => {
-          void processMessage(data.toString()).catch(reject);
+          processingChain = processingChain
+            .then(() => processMessage(data.toString()))
+            .catch(reject);
         });
         socket.once("error", reject);
         socket.once("close", done);
@@ -245,7 +258,7 @@ const healthTimer = setInterval(() => {
     Date.now() - health.lastReceiveTimestampMs > 120_000
   )
     health.state = "STALE";
-  if (health.state === "STALE" && !wasStale && liveSource)
+  if (health.state === "STALE" && !wasStale && liveSource) {
     void flushHealthOnly().catch((error) =>
       console.error(
         JSON.stringify({
@@ -255,6 +268,17 @@ const healthTimer = setInterval(() => {
         }),
       ),
     );
+    // A WS connection can go silently half-dead (the remote end drops
+    // without a TCP RST reaching us, or a middlebox swallows the close
+    // frame) without ever firing 'close'/'error' -- observed live: the
+    // worker logged "Bluesky Jetstream connected" then received nothing
+    // for 30+ minutes while still reporting itself connected, because
+    // nothing forced a reconnect. Detecting STALE and only *reporting* it
+    // (above) doesn't fix a zombie socket; terminate() forces the
+    // underlying connection closed so live()'s `finally`/reconnect-with-
+    // backoff loop actually runs.
+    activeSocket?.terminate();
+  }
 }, 60_000);
 const attributionCleanupTimer = attribution.durable
   ? setInterval(() => {
