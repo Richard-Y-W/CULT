@@ -61,6 +61,7 @@ int main(int argc, char **argv) {
             << ",\"effectiveCascades\":" << report.behavior.effective_cascades
             << ",\"spreadTicks\":" << report.market.spread_ticks
             << ",\"micropriceTicks\":" << report.market.microprice_ticks
-            << ",\"imbalanceL1\":" << report.market.imbalance_l1 << ",\"outputHash\":\"" << report.output_hash
-            << "\"}\n";
+            << ",\"imbalanceL1\":" << report.market.imbalance_l1 << ",\"riskDecision\":\""
+            << cult::exchange::risk_decision_name(report.risk_decision) << "\",\"outputHash\":\""
+            << report.output_hash << "\"}\n";
 }

@@ -65,7 +65,20 @@ void BehaviorAccumulator::apply(const tape::ExpressionEvent &event) {
                                event.type == tape::ExpressionEventType::reply
                            ? 1U
                            : 0U;
-    cascade.depth = std::max<std::uint64_t>(cascade.depth, event.parent_cascade_id.has_value() ? 2U : 1U);
+    // Recursive depth(child) = depth(parent) + 1, keyed by each event's own
+    // record identity rather than a has-any-parent boolean, so an arbitrary
+    // reply/quote/reply chain is not capped at 2. A referenced parent
+    // outside the observed window (no entry in depth_by_record) falls back
+    // to depth 2 -- one level below an implicit, unobserved root.
+    std::uint64_t own_depth = 1U;
+    if (event.parent_cascade_id.has_value()) {
+      const auto parent = state.depth_by_record.find(*event.parent_cascade_id);
+      own_depth = parent != state.depth_by_record.end() ? parent->second + 1U : 2U;
+      cascade.internal_records.insert(*event.parent_cascade_id);
+    }
+    if (event.record_id.has_value())
+      state.depth_by_record[*event.record_id] = own_depth;
+    cascade.depth = std::max(cascade.depth, own_depth);
     cascade.attention += engagement;
   }
 }
@@ -104,6 +117,24 @@ BehaviorState BehaviorAccumulator::snapshot(ExpressionId expression_id, tape::Ti
     }
     output.cascade_hhi = hhi;
     output.effective_cascades = hhi > 0.0 ? 1.0 / hhi : 0.0;
+  }
+  return output;
+}
+
+std::vector<CascadeSummary> BehaviorAccumulator::cascades(ExpressionId expression_id) const {
+  std::vector<CascadeSummary> output;
+  const auto found = states_.find(expression_id);
+  if (found == states_.end())
+    return output;
+  for (const auto &[id, cascade] : found->second.cascades) {
+    (void)id;
+    const auto internal_nodes = cascade.internal_records.size();
+    output.push_back({cascade.id, cascade.root_id, cascade.size, cascade.depth, cascade.breadth,
+                      cascade.last_event_ns - cascade.created_at_ns,
+                      internal_nodes > 0 && cascade.size > 1U
+                          ? static_cast<double>(cascade.size - 1U) / static_cast<double>(internal_nodes)
+                          : 0.0,
+                      cascade.attention});
   }
   return output;
 }

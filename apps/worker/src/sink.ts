@@ -64,7 +64,7 @@ export class PostgresAggregateSink implements AggregateSink {
         ],
       );
       await this.db.query(
-        `INSERT INTO source_health_snapshots_v2(source_id,observed_at,state,last_event_at,last_receive_at,stream_lag_ms,lag_p50_ms,lag_p95_ms,lag_p99_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version) VALUES('BLUESKY',$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'BLUESKY-JETSTREAM-1')`,
+        `INSERT INTO source_health_snapshots_v2(source_id,observed_at,state,last_event_at,last_receive_at,stream_lag_ms,lag_p50_ms,lag_p95_ms,lag_p99_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version,mapped_engagement_events,eligible_engagement_events) VALUES('BLUESKY',$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'BLUESKY-JETSTREAM-1',$13,$14)`,
         [
           batch.observedAt,
           batch.health.state,
@@ -82,6 +82,8 @@ export class PostgresAggregateSink implements AggregateSink {
           batch.health.parseErrors,
           batch.health.duplicateEvents,
           batch.health.reconnectCount,
+          batch.health.mappedEngagementEvents,
+          batch.health.eligibleEngagementEvents,
         ],
       );
       await this.db.query("COMMIT");

@@ -1,4 +1,5 @@
 #include "cult/exchange/simulator.hpp"
+#include "cult/exchange/strategy.hpp"
 #include <algorithm>
 #include <cmath>
 #include <limits>
@@ -117,6 +118,29 @@ RiskDecision PreTradeRisk::check(const OrderRequest &r, const AccountState &a, P
     return RiskDecision::message_rate;
   return RiskDecision::accept;
 }
+const char *risk_decision_name(RiskDecision decision) noexcept {
+  switch (decision) {
+  case RiskDecision::accept:
+    return "ACCEPT";
+  case RiskDecision::killed:
+    return "KILLED";
+  case RiskDecision::order_size:
+    return "ORDER_SIZE";
+  case RiskDecision::position:
+    return "POSITION";
+  case RiskDecision::exposure:
+    return "EXPOSURE";
+  case RiskDecision::leverage:
+    return "LEVERAGE";
+  case RiskDecision::collar:
+    return "COLLAR";
+  case RiskDecision::message_rate:
+    return "MESSAGE_RATE";
+  case RiskDecision::source_health:
+    return "SOURCE_HEALTH";
+  }
+  return "UNKNOWN";
+}
 bool should_halt(double previous_mid, double current_mid, double reference_return, double data_quality,
                  const HaltConfig &config) {
   if (previous_mid <= 0.0 || current_mid <= 0.0)
@@ -157,7 +181,8 @@ std::optional<PriceTicks> reopening_auction_price(const std::vector<AuctionOrder
   return best;
 }
 
-ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool spam_like) {
+ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool spam_like,
+                                   PreTradeLimits risk_limits, double reference_price) {
   constexpr ExpressionId cry = 1;
   constexpr tape::TimestampNs second = 1'000'000'000LL;
   expression::BehaviorAccumulator behavior({{}, 900.0, tape::AttributionMode::fractional});
@@ -166,6 +191,7 @@ ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool s
   const std::size_t posts = concentrated ? 10U : 80U;
   for (std::size_t i = 0; i < posts; ++i) {
     const auto cascade = concentrated ? 1ULL : static_cast<std::uint64_t>(i + 1U);
+    const auto post_record_id = event_id + 1U;
     behavior.apply({++event_id,
                     static_cast<tape::TimestampNs>(i) * second,
                     static_cast<tape::TimestampNs>(i) * second + 1'000'000,
@@ -176,6 +202,7 @@ ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool s
                     "en",
                     cascade,
                     std::nullopt,
+                    post_record_id,
                     {},
                     false});
     const std::uint64_t scale = concentrated ? 80U : 10U;
@@ -188,6 +215,7 @@ ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool s
                     tape::ContentType::ineligible,
                     "en",
                     cascade,
+                    post_record_id,
                     std::nullopt,
                     {scale, scale / 2U, scale / 4U, scale / 3U},
                     false});
@@ -198,22 +226,73 @@ ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool s
     state.cascade_hhi = 1.0;
     state.largest_cascade_share = 1.0;
   }
+  // The book is centered on the instrument's actual current price, not a
+  // hardcoded fixture value -- see the header comment on reference_price.
+  const auto base_tick = static_cast<PriceTicks>(std::llround(reference_price));
   LimitOrderBook book({cry, 1, 1, 1, StpMode::cancel_newest});
   std::uint64_t order_id = 0;
   for (int level = 1; level <= 5; ++level) {
     (void)book.submit(
-        {++order_id, 1, Side::buy, OrderType::limit, TimeInForce::good_til_cancel, 1001 - level, 1000, false, 0}, 0);
+        {++order_id, 1, Side::buy, OrderType::limit, TimeInForce::good_til_cancel, base_tick - level, 1000, false, 0},
+        0);
     (void)book.submit(
-        {++order_id, 2, Side::sell, OrderType::limit, TimeInForce::good_til_cancel, 1001 + level, 1000, false, 0}, 0);
+        {++order_id, 2, Side::sell, OrderType::limit, TimeInForce::good_til_cancel, base_tick + level, 1000, false,
+         0},
+        0);
   }
   const double information =
       std::log1p(state.amplification) * (1.0 - state.largest_cascade_share) * (spam_like ? 0.1 : 1.0);
-  const Quantity aggression = static_cast<Quantity>(std::clamp(information * 180.0, 100.0, 3500.0));
-  auto trade = book.submit({++order_id, 3, Side::buy, OrderType::market, TimeInForce::immediate_or_cancel, 0,
-                            aggression, false, static_cast<tape::TimestampNs>(posts) * second},
-                           static_cast<tape::TimestampNs>(posts) * second + 5'000'000);
+  const double reference = reference_price + std::clamp(information, 0.0, reference_price * 0.02);
+  const auto decision_time = static_cast<tape::TimestampNs>(posts) * second;
+
+  // SIGNAL EVENT: the behavior engine's output becomes a real signal, not a
+  // report-only scalar consumed by nothing.
+  tape::EventTape<tape::SignalEvent> signal_tape;
+  signal_tape.append(
+      {1, decision_time, cry, tape::SignalType::amplification_shock, information, information});
+
+  // AGENT RECEIVES SIGNAL, after AGENT LATENCY.
+  LatencyModel agent_latency({LatencyKind::constant, 2'000'000, 0, 0.25, {}}, seed);
+  const auto agent_receive_time = decision_time + agent_latency.sample();
+  const auto market_before = microstructure(book);
+  EventDrivenAgent agent;
+  OrderSink sink;
+  StrategyContext context{agent_receive_time, reference, market_before, 0, 0.0, sink};
+  agent.on_signal(signal_tape.events().back(), context);
+
+  // STRATEGY DECISION -> intent, not yet an order the exchange has seen.
+  OrderResult trade{};
+  RiskDecision risk_decision = RiskDecision::accept;
+  if (!sink.orders().empty()) {
+    const auto &intent = sink.orders().front();
+    // ORDER LATENCY, then PRE-TRADE RISK, before CULT-X ever sees the order.
+    LatencyModel order_latency({LatencyKind::constant, 3'000'000, 0, 0.25, {}}, seed + 1U);
+    const auto send_time = agent_receive_time + order_latency.sample();
+    const OrderRequest request{++order_id,          3, intent.side,          intent.type,
+                               intent.time_in_force, intent.price_ticks, intent.quantity, intent.post_only,
+                               send_time};
+    // Sized for this simulated venue's desk, not a universal production
+    // default: covers the sizing formula's max notional so an ordinary
+    // shock clears risk, while cpp/tests exercises a real rejection via a
+    // deliberately tightened `risk_limits`. Account equity and the dollar
+    // (not ratio) risk limit scale with reference_price so leverage/margin
+    // checks behave the same regardless of which instrument's actual price
+    // this scenario was seeded with -- maximumLeverage/maximumOrderSize/
+    // maximumPosition are already scale-invariant ratios/quantities.
+    const double price_scale = reference_price / 1000.0;
+    const AccountState account{2'000'000.0 * price_scale, 0, 2'000'000.0 * price_scale, 0.0, false};
+    PreTradeLimits scaled_limits = risk_limits;
+    scaled_limits.maximum_gross_exposure *= price_scale;
+    risk_decision = PreTradeRisk(scaled_limits)
+                        .check(request, account, static_cast<PriceTicks>(std::llround(market_before.midpoint_ticks)),
+                               SourceHealthState::healthy, 1);
+    if (risk_decision == RiskDecision::accept) {
+      trade = book.submit(request, send_time);
+      for (const auto &fill : trade.fills)
+        agent.on_fill(fill, context);
+    }
+  }
   const auto market = microstructure(book);
-  const double reference = 1000.0 + std::clamp(information, 0.0, 20.0);
   const double mid = market.midpoint_ticks;
   std::uint64_t hash = 1469598103934665603ULL;
   for (const auto &event : book.events()) {
@@ -227,7 +306,7 @@ ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool s
   return {spam_like ? "CRY SPAM SHOCK" : (concentrated ? "CRY CELEBRITY SHOCK" : "THE GREAT CRY SHOCK"),
           seed,
           static_cast<std::size_t>(event_id),
-          3U,
+          signal_tape.size(),
           book.events().size(),
           trade.fills.size(),
           state,
@@ -235,6 +314,7 @@ ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool s
           reference,
           mid,
           reference > 0.0 ? mid / reference - 1.0 : 0.0,
+          risk_decision,
           hash};
 }
 LatencyOutcome run_latency_arbitrage(tape::TimestampNs cancel_latency_ns) {

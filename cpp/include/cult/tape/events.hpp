@@ -35,7 +35,16 @@ struct ExpressionEvent {
   ContentType content_type{ContentType::ineligible};
   std::string language_bucket{"UNKNOWN"};
   CascadeId cascade_id{};
+  // The immediate parent POST's own record identity when this event's
+  // subject/target is a specific prior post (e.g. a reply's parent, a
+  // quote's target, a like's subject) -- not the cascade root. Absent for a
+  // cascade-opening create. See ExpressionState::depth_by_record in
+  // behavior.hpp for how this chains into true recursive cascade depth.
   std::optional<CascadeId> parent_cascade_id;
+  // This event's own record identity (e.g. HMAC(recordUri) upstream).
+  // Required to let a later event reference this one as its parent; absent
+  // only for events with no independent post identity of their own.
+  std::optional<CascadeId> record_id;
   EngagementDelta delta;
   bool is_backfill{};
 };

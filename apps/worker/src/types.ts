@@ -30,6 +30,11 @@ export type BehaviorEventType =
   | "REPLY"
   | "QUOTE"
   | "DELETE";
+/**
+ * `cascadeUri` / `parentCascadeUri` / `recordUri` carry HMAC identities
+ * (see AttributionStore.hash), never raw at:// URIs, despite the field
+ * names kept for continuity with the upstream Bluesky record shape.
+ */
 export interface ParsedBehaviorEvent {
   eventId: string;
   cursor: number;
@@ -41,6 +46,7 @@ export interface ParsedBehaviorEvent {
   cascadeUri: string;
   parentCascadeUri?: string;
   recordUri: string;
+  arrivalMode: "LIVE" | "BACKFILLED";
 }
 export interface SourceHealth {
   source: "BLUESKY";
@@ -55,6 +61,8 @@ export interface SourceHealth {
   lagP50Ms: number | null;
   lagP95Ms: number | null;
   lagP99Ms: number | null;
+  mappedEngagementEvents: number;
+  eligibleEngagementEvents: number;
 }
 export interface AggregateObservation {
   expressionId: string;

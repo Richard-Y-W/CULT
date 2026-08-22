@@ -64,6 +64,30 @@ private:
   Quantity size_;
 };
 
+// Reacts to a real tape::SignalEvent (not a report-only scalar) by sizing an
+// aggressive market order proportional to the signal magnitude. This is the
+// agent layer between the behavior/signal engine and the exchange: it is
+// what turns "the internet is doing something" into an order intent, so
+// that intent can then pass through pre-trade risk and latency like any
+// other order, instead of being submitted directly.
+class EventDrivenAgent final : public HftStrategy {
+public:
+  explicit EventDrivenAgent(double sizing_scale = 180.0, Quantity min_size = 100, Quantity max_size = 3500)
+      : sizing_scale_(sizing_scale), min_size_(min_size), max_size_(max_size) {}
+  void on_market_data(const tape::MarketEvent &, StrategyContext &) override {}
+  void on_signal(const tape::SignalEvent &signal, StrategyContext &context) override;
+  void on_fill(const Fill &fill, StrategyContext &context) override;
+  [[nodiscard]] Quantity net_position() const noexcept { return position_; }
+  [[nodiscard]] std::uint64_t fill_count() const noexcept { return fills_; }
+
+private:
+  double sizing_scale_;
+  Quantity min_size_;
+  Quantity max_size_;
+  Quantity position_{};
+  std::uint64_t fills_{};
+};
+
 struct ChildOrder {
   tape::TimestampNs scheduled_time_ns{};
   Quantity quantity{};

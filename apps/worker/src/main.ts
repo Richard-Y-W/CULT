@@ -7,6 +7,7 @@ import { resolveDataMode } from "@cult/hft-engine";
 import { BlueskyEventParser } from "./parser.js";
 import { MinuteAggregator } from "./aggregator.js";
 import { BehaviorTapeWriter } from "./behavior-tape.js";
+import { AttributionStore } from "./attribution.js";
 import {
   CompositeSink,
   PostgresAggregateSink,
@@ -26,8 +27,15 @@ const registryData = JSON.parse(
     "utf8",
   ),
 ) as EmojiRegistryData;
+const attribution = new AttributionStore({
+  secret: process.env.CULT_CASCADE_HASH_SECRET,
+  retentionDays: process.env.CULT_ATTRIBUTION_RETENTION_DAYS
+    ? Number(process.env.CULT_ATTRIBUTION_RETENTION_DAYS)
+    : 14,
+  databaseUrl: liveSource ? process.env.DATABASE_URL : undefined,
+});
 const registry = new EmojiRegistry(registryData),
-  parser = new BlueskyEventParser(registry),
+  parser = new BlueskyEventParser(registry, undefined, attribution),
   aggregator = new MinuteAggregator(
     registryData.assets.map((asset) => asset.id),
   );
@@ -52,6 +60,8 @@ const health: SourceHealth = {
   lagP50Ms: null,
   lagP95Ms: null,
   lagP99Ms: null,
+  mappedEngagementEvents: 0,
+  eligibleEngagementEvents: 0,
 };
 let receivedThisMinute = 0,
   stopping = false,
@@ -73,6 +83,8 @@ if (liveSource) {
   sink = new CompositeSink([postgres, new ReplaySink(replayPath)]);
 } else sink = new ReplaySink(replayPath);
 async function flush() {
+  health.mappedEngagementEvents = attribution.mappedEngagementEvents;
+  health.eligibleEngagementEvents = attribution.eligibleEngagementEvents;
   const batch = aggregator.flush(health);
   if (!batch) return;
   await sink.write(batch);
@@ -200,12 +212,38 @@ const healthTimer = setInterval(() => {
   )
     health.state = "STALE";
 }, 60_000);
+const attributionCleanupTimer = attribution.durable
+  ? setInterval(() => {
+      void attribution.cleanupExpired().catch((error) =>
+        console.error(
+          JSON.stringify({
+            level: "error",
+            message: "attribution retention cleanup failed",
+            error: error instanceof Error ? error.message : String(error),
+          }),
+        ),
+      );
+    }, 3_600_000)
+  : null;
 const shutdown = () => {
   stopping = true;
   clearInterval(healthTimer);
+  if (attributionCleanupTimer) clearInterval(attributionCleanupTimer);
 };
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
+if (attribution.durable) {
+  const restored = await attribution.restore();
+  console.log(
+    JSON.stringify({
+      level: "info",
+      message: "post attribution warm-start restored",
+      restoredPosts: restored,
+    }),
+  );
+}
 if (liveSource) await live();
 else await synthetic();
 clearInterval(healthTimer);
+if (attributionCleanupTimer) clearInterval(attributionCleanupTimer);
+await attribution.close();

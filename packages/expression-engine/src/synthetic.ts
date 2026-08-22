@@ -131,10 +131,24 @@ export function generateSynthetic(
     for (let d = 0; d < days; d++) {
       const timestamp = new Date(start.getTime() + d * 86400000).toISOString(),
         event = EVENTS.find((e) => e.day === d && e.assets.includes(asset.id));
-      variance = 0.88 * variance + 0.12 * Math.abs(rng.normal() * 0.018);
+      // Calibrated so most days are quiet (~±0.5-2%) and large moves are
+      // genuine, comparatively rare shocks (scripted EVENTS above, or the
+      // small independent jumpProbability below) rather than routine noise
+      // -- a chain-linked index with persistently large daily moves
+      // geometrically explodes over a year and desensitizes the "a big
+      // move happened" signal. These are scenario assumptions, not a
+      // claim about real emoji dynamics; recalibrate against measured
+      // Bluesky prevalence once enough live history exists (see
+      // docs/KNOWN_LIMITATIONS.md).
+      variance = 0.85 * variance + 0.15 * Math.abs(rng.normal() * 0.009);
       if (asset.id === "expr_wilt" && d > 175) variance *= 1.012;
+      const jumpRoll = rng.next(),
+        jump =
+          jumpRoll < 0.01
+            ? (rng.next() < 0.5 ? -1 : 1) * (0.05 + rng.next() * 0.07)
+            : 0;
       momentum =
-        0.6 * momentum +
+        0.2 * momentum +
         (asset.id === "expr_joy"
           ? -0.0007
           : asset.id === "expr_skull"
@@ -142,20 +156,21 @@ export function generateSynthetic(
             : asset.id === "expr_heart"
               ? 0.0001
               : 0.00025) +
-        global[d]! * 0.2 +
+        global[d]! * 0.15 +
         rng.normal() * variance +
+        jump +
         (event?.title.includes("hype")
-          ? 0.12
+          ? 0.1
           : event?.title.includes("Doom")
-            ? 0.08
+            ? 0.07
             : event?.title.includes("overtakes")
               ? asset.id === "expr_crying_face"
-                ? 0.09
-                : -0.06
+                ? 0.08
+                : -0.05
               : event?.title.includes("disbelief")
-                ? 0.1
+                ? 0.09
                 : 0);
-      momentum = Math.max(-0.16, Math.min(0.18, momentum));
+      momentum = Math.max(-0.2, Math.min(0.22, momentum));
       level = Math.max(20, level * Math.exp(momentum));
       const indexValue = level,
         marketPrice =

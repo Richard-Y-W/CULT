@@ -31,6 +31,18 @@ void ReferenceArbitrageStrategy::on_signal(const tape::SignalEvent &, StrategyCo
   context.order_sink.send(
       {premium > 0.0 ? Side::sell : Side::buy, OrderType::market, TimeInForce::immediate_or_cancel, 0, size_, false});
 }
+void EventDrivenAgent::on_signal(const tape::SignalEvent &signal, StrategyContext &context) {
+  if (signal.type != tape::SignalType::amplification_shock)
+    return;
+  const auto quantity = static_cast<Quantity>(
+      std::clamp(signal.value * sizing_scale_, static_cast<double>(min_size_), static_cast<double>(max_size_)));
+  context.order_sink.send(
+      {Side::buy, OrderType::market, TimeInForce::immediate_or_cancel, 0, quantity, false});
+}
+void EventDrivenAgent::on_fill(const Fill &fill, StrategyContext &) {
+  position_ += fill.aggressor_side == Side::buy ? fill.quantity : -fill.quantity;
+  ++fills_;
+}
 std::vector<ChildOrder> twap_schedule(Quantity total, tape::TimestampNs start, tape::TimestampNs end,
                                       std::size_t slices) {
   if (total <= 0 || slices == 0U || end <= start)

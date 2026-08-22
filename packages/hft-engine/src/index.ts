@@ -41,6 +41,7 @@ export interface AlertThresholds {
 export interface FeedEnvelope<T> {
   schemaVersion: "CULT-FEED-1";
   channel:
+    | "market"
     | "reference"
     | "signals"
     | "trades"
@@ -51,6 +52,17 @@ export interface FeedEnvelope<T> {
   sequence: number;
   publishedTimeNs: string;
   payload: T;
+}
+
+/** One instrument's tradeable price, broadcast on the "market" channel. */
+export interface MarketTickPayload {
+  assetId: string;
+  ticker: string;
+  price: number;
+  bid: number;
+  ask: number;
+  changePercent: number;
+  dataMode: CultDataMode;
 }
 
 export interface ExpressionTapeEvent {
@@ -146,12 +158,77 @@ export interface Phase4Scenario {
   risk: {
     state: "NORMAL";
     killed: false;
+    // Outcome of the real pre-trade risk check the agent's order passed
+    // through before reaching the (synthetic) matching path -- mirrors
+    // cult::exchange::PreTradeRisk::check on the C++ side. "ACCEPT" unless
+    // a caller deliberately tightens riskLimits below the scenario's
+    // default-sized simulated desk.
+    decision: RiskDecision;
     grossExposure: number;
     netExposure: number;
     leverage: number;
     marginUtilization: number;
   };
   heatmaps: Record<string, Heatmap>;
+}
+
+export type RiskDecision =
+  | "ACCEPT"
+  | "ORDER_SIZE"
+  | "POSITION"
+  | "EXPOSURE"
+  | "LEVERAGE"
+  | "COLLAR";
+export interface PreTradeLimits {
+  maximumOrderSize: number;
+  maximumPosition: number;
+  maximumGrossExposure: number;
+  maximumLeverage: number;
+  collarTicks: number;
+}
+const defaultRiskLimits: PreTradeLimits = {
+  maximumOrderSize: 10_000,
+  maximumPosition: 50_000,
+  // Sized for this simulated venue's desk, not a universal production
+  // default: covers the sizing formula's max notional so an ordinary shock
+  // clears risk, while a caller can pass a tighter PreTradeLimits to
+  // exercise an actual rejection.
+  maximumGrossExposure: 5_000_000,
+  maximumLeverage: 3.0,
+  collarTicks: 100,
+};
+function preTradeRiskCheck(
+  side: "BUY" | "SELL",
+  quantity: number,
+  priceTicks: number,
+  midpointTicks: number,
+  account: { position: number; equity: number },
+  limits: PreTradeLimits,
+): RiskDecision {
+  if (quantity > limits.maximumOrderSize) return "ORDER_SIZE";
+  const signedQuantity = side === "BUY" ? quantity : -quantity;
+  if (Math.abs(account.position + signedQuantity) > limits.maximumPosition)
+    return "POSITION";
+  const price = priceTicks || midpointTicks;
+  if (Math.abs(price - midpointTicks) > limits.collarTicks) return "COLLAR";
+  const proposed = Math.abs(
+    (account.position + signedQuantity) * midpointTicks,
+  );
+  if (proposed > limits.maximumGrossExposure) return "EXPOSURE";
+  if (account.equity <= 0 || proposed / account.equity > limits.maximumLeverage)
+    return "LEVERAGE";
+  return "ACCEPT";
+}
+/** Deterministic per-(seed,tag) latency sample in ns -- reproducible, not a fixed constant. */
+function deterministicLatencyNs(
+  seed: number,
+  tag: string,
+  baseNs: number,
+  jitterNs: number,
+): bigint {
+  const hash = createHash("sha256").update(`${seed}:${tag}`).digest();
+  const jitter = jitterNs > 0 ? hash.readUInt32BE(0) % jitterNs : 0;
+  return BigInt(baseNs + jitter);
 }
 
 export function resolveDataMode(environment: NodeJS.ProcessEnv): CultDataMode {
@@ -182,9 +259,17 @@ export function attributionCredit(
   return mode === "FULL" ? 1 : 1 / expressionCount;
 }
 
+// `referencePrice` seeds the book around the actual current price of the
+// selected instrument -- the 1000 default exists only so isolated
+// unit/scenario callers keep working unchanged (see the matching comment
+// on cpp's run_great_cry_shock); a product caller must pass the real
+// current market/reference price so this scenario's book/microstructure
+// share the same price scale as the rest of the product.
 export function createPhase4Demo(
   kind: "great-cry" | "celebrity" | "spam" = "great-cry",
   seed = 20260821,
+  riskLimits: PreTradeLimits = defaultRiskLimits,
+  referencePrice = 1000,
 ): Phase4Scenario {
   const broad = kind === "great-cry",
     spam = kind === "spam",
@@ -236,14 +321,18 @@ export function createPhase4Demo(
     cascadeHhi = 1 / cascades,
     quality = spam ? 0.01 : broad ? 1 - cascadeHhi : 0.15,
     information = Math.log1p(amplification) * quality,
-    reference = 1000 + Math.min(20, information),
+    // Book is centered on the instrument's actual current price, not a
+    // hardcoded fixture value -- see the referencePrice parameter comment.
+    basePriceTicks = Math.round(referencePrice),
+    reference = referencePrice + Math.min(referencePrice * 0.02, information),
     marketTape: MarketTapeEvent[] = [],
     depth: Phase4Scenario["microstructure"]["depth"] = [];
   let sequence = 0,
     orderId = 0;
   for (let level = 1; level <= 5; level++) {
     for (const side of ["BID", "ASK"] as const) {
-      const priceTicks = side === "BID" ? 1001 - level : 1001 + level;
+      const priceTicks =
+        side === "BID" ? basePriceTicks - level : basePriceTicks + level;
       depth.push({ side, priceTicks, quantity: 1000 });
       marketTape.push({
         sequence: ++sequence,
@@ -263,41 +352,83 @@ export function createPhase4Demo(
       });
     }
   }
+  // AGENT RECEIVES SIGNAL (the amplification-shock signal derived from the
+  // behavior engine above), after AGENT LATENCY -- the agent does not act
+  // on `information` directly the instant it is computed.
+  const decisionTimeNs = BigInt(posts) * 1_000_000_000n,
+    agentLatencyNs = deterministicLatencyNs(seed, "agent", 2_000_000, 500_000),
+    agentReceiveTimeNs = decisionTimeNs + agentLatencyNs;
+  // STRATEGY DECISION: sizing math is unchanged from the prior shortcut,
+  // but it now lives behind an agent reacting to a signal rather than
+  // information flowing straight into an order.
   const aggressiveQuantity = Math.floor(
-      Math.max(100, Math.min(3500, information * 180)),
+    Math.max(100, Math.min(3500, information * 180)),
+  );
+  // ORDER LATENCY, then PRE-TRADE RISK, before the order reaches the book.
+  const orderLatencyNs = deterministicLatencyNs(
+      seed,
+      "order",
+      3_000_000,
+      500_000,
     ),
-    time = (BigInt(posts) * 1_000_000_000n + 5_000_000n).toString();
-  marketTape.push({
-    sequence: ++sequence,
-    exchangeTimeNs: time,
-    type: "ORDER_ACCEPTED",
-    orderId: ++orderId,
-    priceTicks: 0,
-    quantity: aggressiveQuantity,
-  });
-  let remainder = aggressiveQuantity;
-  for (const level of depth.filter((item) => item.side === "ASK")) {
-    if (!remainder) break;
-    const quantity = Math.min(level.quantity, remainder);
+    time = (agentReceiveTimeNs + orderLatencyNs + 5_000_000n).toString(),
+    // Account equity and the dollar (not ratio) risk limit scale with
+    // referencePrice so leverage/margin checks behave the same regardless
+    // of which instrument's actual price this scenario was seeded with --
+    // see the matching comment in cpp/src/exchange/simulator.cpp.
+    priceScale = referencePrice / 1000,
+    account = { position: 0, equity: 2_000_000 * priceScale },
+    scaledRiskLimits = {
+      ...riskLimits,
+      maximumGrossExposure: riskLimits.maximumGrossExposure * priceScale,
+    },
+    preTradeMidpoint = basePriceTicks - 0.5,
+    riskDecision = preTradeRiskCheck(
+      "BUY",
+      aggressiveQuantity,
+      0,
+      preTradeMidpoint,
+      account,
+      scaledRiskLimits,
+    );
+  if (riskDecision === "ACCEPT") {
     marketTape.push({
       sequence: ++sequence,
       exchangeTimeNs: time,
-      type: "TRADE",
-      orderId,
-      contraOrderId: depth.indexOf(level) + 1,
-      priceTicks: level.priceTicks,
-      quantity,
-      aggressorSide: "BUY",
+      type: "ORDER_ACCEPTED",
+      orderId: ++orderId,
+      priceTicks: 0,
+      quantity: aggressiveQuantity,
     });
-    level.quantity -= quantity;
-    remainder -= quantity;
+    let remainder = aggressiveQuantity;
+    for (const level of depth.filter((item) => item.side === "ASK")) {
+      if (!remainder) break;
+      const quantity = Math.min(level.quantity, remainder);
+      marketTape.push({
+        sequence: ++sequence,
+        exchangeTimeNs: time,
+        type: "TRADE",
+        orderId,
+        contraOrderId: depth.indexOf(level) + 1,
+        priceTicks: level.priceTicks,
+        quantity,
+        aggressorSide: "BUY",
+      });
+      level.quantity -= quantity;
+      remainder -= quantity;
+    }
   }
-  const activeAsks = depth.filter(
+  const filledQuantity =
+      riskDecision === "ACCEPT" ? aggressiveQuantity : 0,
+    activeAsks = depth.filter(
       (item) => item.side === "ASK" && item.quantity > 0,
     ),
-    bestBid = 1000,
-    bestAsk = activeAsks[0]?.priceTicks ?? 1006,
-    bidSize = 1000,
+    activeBids = depth.filter(
+      (item) => item.side === "BID" && item.quantity > 0,
+    ),
+    bestBid = activeBids[0]?.priceTicks ?? basePriceTicks - 1,
+    bestAsk = activeAsks[0]?.priceTicks ?? basePriceTicks + 5,
+    bidSize = activeBids[0]?.quantity ?? 1000,
     askSize = activeAsks[0]?.quantity ?? 0,
     midpoint = (bestBid + bestAsk) / 2,
     microprice =
@@ -366,17 +497,18 @@ export function createPhase4Demo(
         ),
         imbalanceL5: 0,
         tradeImbalance: 1,
-        ofi: aggressiveQuantity,
+        ofi: filledQuantity,
         depth,
       },
       risk: {
         state: "NORMAL" as const,
         killed: false as const,
-        grossExposure: aggressiveQuantity * midpoint,
-        netExposure: aggressiveQuantity * midpoint,
-        leverage: round((aggressiveQuantity * midpoint) / 10_000_000),
+        decision: riskDecision,
+        grossExposure: filledQuantity * midpoint,
+        netExposure: filledQuantity * midpoint,
+        leverage: round((filledQuantity * midpoint) / 10_000_000),
         marginUtilization: round(
-          (aggressiveQuantity * midpoint * 0.3) / 10_000_000,
+          (filledQuantity * midpoint * 0.3) / 10_000_000,
         ),
       },
       heatmaps: {

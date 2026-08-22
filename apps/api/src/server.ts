@@ -31,6 +31,7 @@ import {
   spearman,
 } from "@cult/research-engine";
 import { createPhase4Demo, resolveDataMode } from "@cult/hft-engine";
+import { attachRealtimeServer } from "./realtime.js";
 const port = Number(process.env.PORT ?? 4100),
   data = generateSynthetic(),
   prices = Object.fromEntries(ASSETS.map((a) => [a.id, a.marketPrice])),
@@ -42,7 +43,17 @@ const dataMode = resolveDataMode(process.env),
     empiricalMode && process.env.DATABASE_URL
       ? new pg.Pool({ connectionString: process.env.DATABASE_URL })
       : null;
-const phase4Demo = createPhase4Demo("great-cry");
+// Seed the scenario's book from CRY's actual current market price (the same
+// `prices` map SimulatedMarket trades against) so Casual, Analyst, Quant,
+// watchlists, order entry, and risk all share one instrument price scale --
+// a hardcoded ~1000 book here would put Quant's L2/microstructure in a
+// different price universe than the rest of the product.
+const phase4Demo = createPhase4Demo(
+  "great-cry",
+  undefined,
+  undefined,
+  prices["expr_crying_face"],
+);
 const user = {
   id: "user_demo",
   username: "cryingcapital",
@@ -220,8 +231,14 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
   if (path === "/api/v1/data/status") {
     if (empiricalMode && livePool) {
       const result = await livePool.query(
-        `SELECT source_id,state,last_event_at,last_receive_at,stream_lag_ms,lag_p50_ms,lag_p95_ms,lag_p99_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version,observed_at FROM source_health_snapshots_v2 ORDER BY observed_at DESC LIMIT 1`,
+        `SELECT source_id,state,last_event_at,last_receive_at,stream_lag_ms,lag_p50_ms,lag_p95_ms,lag_p99_ms,events_per_minute,parse_errors,duplicate_events,reconnect_count,source_version,observed_at,mapped_engagement_events,eligible_engagement_events FROM source_health_snapshots_v2 ORDER BY observed_at DESC LIMIT 1`,
       );
+      const source = result.rows[0] ?? {
+        source_id: "BLUESKY",
+        state: "DISCONNECTED",
+      };
+      const mapped = source.mapped_engagement_events,
+        eligible = source.eligible_engagement_events;
       return json(res, 200, {
         data: {
           mode: dataMode === "live-shadow" ? "LIVE_SHADOW" : "LIVE_MARKET",
@@ -230,10 +247,15 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
           status: "PROVISIONAL",
           registryVersion: "EMOJI-17.0-CULT-V1",
           referenceMethodology: "REF-JEFFREYS-1",
-          source: result.rows[0] ?? {
-            source_id: "BLUESKY",
-            state: "DISCONNECTED",
-          },
+          source,
+          // Share of observed like/repost/reply/quote events that resolved
+          // to an expression-bearing post (durable + in-memory attribution
+          // combined). Never fabricated: null until an eligible engagement
+          // event has actually been observed.
+          mappedEngagementRate:
+            eligible != null && Number(eligible) > 0
+              ? Number(mapped) / Number(eligible)
+              : null,
         },
       });
     }
@@ -648,7 +670,7 @@ const routes = async (req: IncomingMessage, res: ServerResponse) => {
     });
   return json(res, 404, { error: "Route not found" });
 };
-createServer((req, res) => {
+const httpServer = createServer((req, res) => {
   const requestId = crypto.randomUUID();
   const began = Date.now();
   routes(req, res)
@@ -667,7 +689,9 @@ createServer((req, res) => {
         }),
       ),
     );
-}).listen(port, () =>
+});
+attachRealtimeServer(httpServer, () => dataMode);
+httpServer.listen(port, () =>
   console.log(
     JSON.stringify({ level: "info", message: "CULT API ready", port }),
   ),

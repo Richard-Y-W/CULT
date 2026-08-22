@@ -1,0 +1,89 @@
+/* CULT design tokens. See docs/design/design-system.md for the full spec.
+   Never hardcode a color/spacing/duration value in a component -- add or
+   reuse a token here instead. */
+:root {
+  /* Surfaces */
+  --bg-primary: #f5f3ed;
+  --bg-secondary: #faf9f5;
+  --bg-tertiary: #eef0e7;
+  --bg-inverse: #0d100e;
+  --bg-inverse-elevated: #111512;
+
+  /* Borders */
+  --border-subtle: #d9dbd1;
+  --border-strong: #a9b0a2;
+  --border-inverse: #303630;
+
+  /* Text */
+  --text-primary: #172117;
+  --text-secondary: #4c554a;
+  --text-muted: #737d72;
+  --text-inverse: #edf2ea;
+  --text-inverse-muted: #8a928a;
+
+  /* Semantic status -- positive/negative are the buy/sell convention only;
+     data-quality/status uses informational/warning/critical, never green/red. */
+  --positive: #4d9630;
+  --negative: #cf4d45;
+  --warning: #b6862c;
+  --critical: #cf4d45;
+  --informational: #4472c4;
+  --accent: #5c8d3e;
+  --accent-inverse: #aaff70;
+
+  /* Spacing scale (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Radii -- deliberately restrained, not the giant-rounded-rectangle look */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+
+  /* Elevation -- one subtle shadow, not a pile of inconsistent ones */
+  --elevation-1: 0 2px 8px rgba(23, 33, 23, 0.06);
+
+  /* Typography */
+  --font-ui: "DM Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: "Instrument Serif", serif;
+
+  /* Motion (see docs/frontend/motion.md once written -- interpolates
+     presentation only, never invents an observation) */
+  --motion-fast: 120ms;
+  --motion-normal: 200ms;
+  --motion-slow: 320ms;
+  --motion-easing: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 0ms;
+    --motion-normal: 0ms;
+    --motion-slow: 0ms;
+  }
+}
+
+/* Dark surface tokens, used directly by Quant/Analyst (which are dark-first)
+   and available to any component via [data-density="dark"] scoping. */
+.cult-dark {
+  --bg-primary: var(--bg-inverse);
+  --bg-secondary: var(--bg-inverse-elevated);
+  --bg-tertiary: #1b211b;
+  --border-subtle: var(--border-inverse);
+  --border-strong: #4e554e;
+  --text-primary: var(--text-inverse);
+  --text-secondary: #b7c0b4;
+  --text-muted: var(--text-inverse-muted);
+  --accent: var(--accent-inverse);
+}
+
+.cult-numeric,
+.cult-numeric * {
+  font-variant-numeric: tabular-nums;
+}

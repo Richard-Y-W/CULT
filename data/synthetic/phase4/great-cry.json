@@ -7,7 +7,7 @@
     "exchangeConfig": "CULT-X-1",
     "signalMethodology": "CULT-BEHAVIOR-1",
     "mode": "SYNTHETIC",
-    "outputHash": "46c328627c5369504e66ee30b765825ad4fc28cec95becff32909e962efdb49b"
+    "outputHash": "c0e6400d921dcc4d38161bb2bbeaaefc820de28231c3d90ddf09e694ba2e0650"
   },
   "expressionTape": [
     {
@@ -2894,7 +2894,7 @@
   "signalTape": [
     {
       "id": 1,
-      "eventTimeNs": "80005000000",
+      "eventTimeNs": "80010215523",
       "expressionId": "expr_crying_face",
       "type": "PREVALENCE_SHOCK",
       "value": 80,
@@ -2903,7 +2903,7 @@
     },
     {
       "id": 2,
-      "eventTimeNs": "80005000000",
+      "eventTimeNs": "80010215523",
       "expressionId": "expr_crying_face",
       "type": "AMPLIFICATION_SHOCK",
       "value": 1195.216925,
@@ -2912,7 +2912,7 @@
     },
     {
       "id": 3,
-      "eventTimeNs": "80005000000",
+      "eventTimeNs": "80010215523",
       "expressionId": "expr_crying_face",
       "type": "ATTENTION_BLOCK",
       "value": 0.9875,
@@ -3083,7 +3083,7 @@
     },
     {
       "sequence": 21,
-      "exchangeTimeNs": "80005000000",
+      "exchangeTimeNs": "80010215523",
       "type": "ORDER_ACCEPTED",
       "orderId": 11,
       "priceTicks": 0,
@@ -3091,7 +3091,7 @@
     },
     {
       "sequence": 22,
-      "exchangeTimeNs": "80005000000",
+      "exchangeTimeNs": "80010215523",
       "type": "TRADE",
       "orderId": 11,
       "contraOrderId": 2,
@@ -3101,7 +3101,7 @@
     },
     {
       "sequence": 23,
-      "exchangeTimeNs": "80005000000",
+      "exchangeTimeNs": "80010215523",
       "type": "TRADE",
       "orderId": 11,
       "contraOrderId": 4,
@@ -3194,6 +3194,7 @@
   "risk": {
     "state": "NORMAL",
     "killed": false,
+    "decision": "ACCEPT",
     "grossExposure": 1260888.5,
     "netExposure": 1260888.5,
     "leverage": 0.126089,
@@ -3231,7 +3232,7 @@
         ]
       ],
       "units": "lots",
-      "timestamp": "80005000000",
+      "timestamp": "80010215523",
       "methodology": "CULT-X-1"
     },
     "signals": {
@@ -3253,7 +3254,7 @@
         ]
       ],
       "units": "mixed; see signal dictionary",
-      "timestamp": "80005000000",
+      "timestamp": "80010215523",
       "methodology": "CULT-BEHAVIOR-1"
     }
   }

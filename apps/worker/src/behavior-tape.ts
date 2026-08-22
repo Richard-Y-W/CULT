@@ -1,19 +1,16 @@
-import { createHmac, randomBytes } from "node:crypto";
 import { appendFile, mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
 import type { ParsedBehaviorEvent } from "./types.js";
 
+/**
+ * Writes the privacy-safe expression-event JSONL tape. Identities on
+ * `ParsedBehaviorEvent` (`cascadeUri`/`parentCascadeUri`/`recordUri`) are
+ * already HMAC digests produced by `AttributionStore` — this writer passes
+ * them through rather than hashing again, so a cascade's id stays stable
+ * across a worker restart (same shared secret, same digest).
+ */
 export class BehaviorTapeWriter {
-  private readonly key: Buffer;
-  constructor(
-    private readonly path: string,
-    secret = process.env.CULT_CASCADE_HASH_SECRET,
-  ) {
-    this.key = secret ? Buffer.from(secret) : randomBytes(32);
-  }
-  private opaque(value: string) {
-    return createHmac("sha256", this.key).update(value).digest("hex");
-  }
+  constructor(private readonly path: string) {}
   async write(events: ParsedBehaviorEvent[]) {
     if (!events.length) return;
     await mkdir(dirname(this.path), { recursive: true });
@@ -31,12 +28,13 @@ export class BehaviorTapeWriter {
           quotes: event.type === "QUOTE" ? 1 : 0,
           replies: event.type === "REPLY" ? 1 : 0,
         },
-        cascadeId: this.opaque(event.cascadeUri),
+        cascadeId: event.cascadeUri,
         ...(event.parentCascadeUri
-          ? { parentCascadeId: this.opaque(event.parentCascadeUri) }
+          ? { parentCascadeId: event.parentCascadeUri }
           : {}),
-        recordId: this.opaque(event.recordUri),
-        isBackfill: false,
+        recordId: event.recordUri,
+        arrivalMode: event.arrivalMode,
+        isBackfill: event.arrivalMode === "BACKFILLED",
         methodologyVersion: "CULT-BEHAVIOR-1",
         sourceVersion: "BLUESKY-JETSTREAM-1",
         expressionRegistryVersion: "EMOJI-17.0-CULT-V1",

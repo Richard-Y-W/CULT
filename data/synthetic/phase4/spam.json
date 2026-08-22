@@ -7,7 +7,7 @@
     "exchangeConfig": "CULT-X-1",
     "signalMethodology": "CULT-BEHAVIOR-1",
     "mode": "SYNTHETIC",
-    "outputHash": "2f52af5095510ad810da4f86d281a067e4a9b35642f94e2a630d5a25c3b38493"
+    "outputHash": "72c9f76bf1874985bf2741c51007bf68be9b64160d0445246cc1773eb457ec05"
   },
   "expressionTape": [
     {
@@ -374,7 +374,7 @@
   "signalTape": [
     {
       "id": 1,
-      "eventTimeNs": "10005000000",
+      "eventTimeNs": "10010215523",
       "expressionId": "expr_crying_face",
       "type": "PREVALENCE_SHOCK",
       "value": 10,
@@ -383,7 +383,7 @@
     },
     {
       "id": 2,
-      "eventTimeNs": "10005000000",
+      "eventTimeNs": "10010215523",
       "expressionId": "expr_crying_face",
       "type": "AMPLIFICATION_SHOCK",
       "value": 343.049288,
@@ -392,7 +392,7 @@
     },
     {
       "id": 3,
-      "eventTimeNs": "10005000000",
+      "eventTimeNs": "10010215523",
       "expressionId": "expr_crying_face",
       "type": "CONCENTRATION_WARNING",
       "value": 0.01,
@@ -563,7 +563,7 @@
     },
     {
       "sequence": 21,
-      "exchangeTimeNs": "10005000000",
+      "exchangeTimeNs": "10010215523",
       "type": "ORDER_ACCEPTED",
       "orderId": 11,
       "priceTicks": 0,
@@ -571,7 +571,7 @@
     },
     {
       "sequence": 22,
-      "exchangeTimeNs": "10005000000",
+      "exchangeTimeNs": "10010215523",
       "type": "TRADE",
       "orderId": 11,
       "contraOrderId": 2,
@@ -664,6 +664,7 @@
   "risk": {
     "state": "NORMAL",
     "killed": false,
+    "decision": "ACCEPT",
     "grossExposure": 100100,
     "netExposure": 100100,
     "leverage": 0.01001,
@@ -701,7 +702,7 @@
         ]
       ],
       "units": "lots",
-      "timestamp": "10005000000",
+      "timestamp": "10010215523",
       "methodology": "CULT-X-1"
     },
     "signals": {
@@ -723,7 +724,7 @@
         ]
       ],
       "units": "mixed; see signal dictionary",
-      "timestamp": "10005000000",
+      "timestamp": "10010215523",
       "methodology": "CULT-BEHAVIOR-1"
     }
   }

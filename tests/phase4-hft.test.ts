@@ -43,6 +43,26 @@ describe("Phase 4 event-to-market contract", () => {
     expect(first.state.likeFlow).toBeGreaterThan(0);
   });
 
+  it("routes the amplification signal through pre-trade risk before it reaches the market", () => {
+    const accepted = createPhase4Demo("great-cry", 42);
+    expect(accepted.risk.decision).toBe("ACCEPT");
+    expect(accepted.marketTape.some((event) => event.type === "TRADE")).toBe(
+      true,
+    );
+    const rejected = createPhase4Demo("great-cry", 42, {
+      maximumOrderSize: 10_000,
+      maximumPosition: 50_000,
+      maximumGrossExposure: 1_000,
+      maximumLeverage: 3,
+      collarTicks: 100,
+    });
+    expect(rejected.risk.decision).not.toBe("ACCEPT");
+    expect(rejected.marketTape.some((event) => event.type === "TRADE")).toBe(
+      false,
+    );
+    expect(rejected.risk.grossExposure).toBe(0);
+  });
+
   it("distinguishes broad adoption from concentrated and spam-like shocks", () => {
     const broad = createPhase4Demo("great-cry"),
       celebrity = createPhase4Demo("celebrity"),

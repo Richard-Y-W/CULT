@@ -1,6 +1,7 @@
 #include "cult/analytics/streaming.hpp"
 #include "cult/backtest/engine.hpp"
 #include "cult/exchange/order_book.hpp"
+#include "cult/exchange/simulation_api.hpp"
 #include "cult/exchange/simulator.hpp"
 #include "cult/exchange/strategy.hpp"
 #include "cult/expression/behavior.hpp"
@@ -120,6 +121,7 @@ int main() {
                   "en",
                   1,
                   std::nullopt,
+                  100,
                   {},
                   false});
   behavior.apply({2,
@@ -132,12 +134,79 @@ int main() {
                   "en",
                   1,
                   std::nullopt,
+                  std::nullopt,
                   {10, 5, 2, 1},
                   false});
   const auto behavior_state = behavior.snapshot(1, 1'000'000'000);
   check(behavior_state.creation_flow == 1, "engagement does not change prevalence creation flow");
   check(behavior_state.repost_flow == 5 && behavior_state.amplification > 0.0,
         "engagement components and amplification");
+  expression::BehaviorAccumulator chain;
+  chain.apply({10, 0, 1, 1, {1}, tape::ExpressionEventType::create, tape::ContentType::original, "en", 1,
+              std::nullopt, 1000, {}, false});
+  chain.apply({11, 1, 1, 1, {1}, tape::ExpressionEventType::reply, tape::ContentType::reply, "en", 1, 1000, 1001,
+              {}, false});
+  chain.apply({12, 2, 1, 1, {1}, tape::ExpressionEventType::quote, tape::ContentType::quote, "en", 1, 1001, 1002,
+              {}, false});
+  chain.apply({13, 3, 1, 1, {1}, tape::ExpressionEventType::reply, tape::ContentType::reply, "en", 1, 1002,
+              std::nullopt, {}, false});
+  const auto chain_cascades = chain.cascades(1);
+  check(chain_cascades.size() == 1 && chain_cascades.front().depth == 4,
+        "recursive cascade depth is not capped at 2");
+  {
+    const auto accepted = exchange::run_great_cry_shock(20260821ULL, false, false);
+    check(accepted.signal_events == 1, "signal_events reflects the real signal tape, not a hardcoded count");
+    check(accepted.risk_decision == exchange::RiskDecision::accept && accepted.trades > 0,
+          "an ordinary shock clears pre-trade risk and reaches CULT-X");
+    const exchange::PreTradeLimits tight{10000, 50000, 1'000.0, 3.0, 100, 10000};
+    const auto rejected = exchange::run_great_cry_shock(20260821ULL, false, false, tight);
+    check(rejected.risk_decision != exchange::RiskDecision::accept && rejected.trades == 0,
+          "pre-trade risk actually rejects an order that breaches a tightened exposure limit");
+  }
+  {
+    exchange::SimulationHandle sim({1, 1, 1, 1, exchange::StpMode::cancel_newest});
+    check(sim.status() == exchange::ReplayStatus::idle, "simulation handle starts idle");
+    std::vector<tape::ExpressionEvent> events;
+    events.push_back({1, 0, 1, 1, {1}, tape::ExpressionEventType::create, tape::ContentType::original, "en", 1,
+                      std::nullopt, 100, {}, false});
+    events.push_back({2, 1, 1, 1, {1}, tape::ExpressionEventType::reply, tape::ContentType::reply, "en", 1, 100, 101,
+                      {}, false});
+    sim.load_replay(events);
+    check(sim.status() == exchange::ReplayStatus::loaded, "loadReplay queues events without running them");
+    sim.run();
+    check(sim.status() == exchange::ReplayStatus::finished && sim.cursor() == 2,
+          "runReplay steps through the loaded expression tape");
+    check(sim.behavior().cascades(1).front().depth == 2, "replayed events reach the behavior accumulator");
+    check(sim.instrument_state() == exchange::InstrumentState::open, "getInstrumentState reads the live book state");
+    (void)sim.book().submit(
+        {1, 1, exchange::Side::buy, exchange::OrderType::limit, exchange::TimeInForce::good_til_cancel, 999, 10,
+         false, 0},
+        0);
+    (void)sim.book().submit(
+        {2, 2, exchange::Side::sell, exchange::OrderType::limit, exchange::TimeInForce::good_til_cancel, 1001, 10,
+         false, 1},
+        1);
+    check(sim.l1().bid.has_value() && sim.l1().ask.has_value(), "getL1 reflects the resting book");
+    check(sim.l2().bids.size() == 1 && sim.l2().asks.size() == 1, "getL2 reflects the resting book");
+    const auto fill = sim.book().submit(
+        {3, 3, exchange::Side::buy, exchange::OrderType::market, exchange::TimeInForce::immediate_or_cancel, 0, 5,
+         false, 2},
+        2);
+    check(!fill.fills.empty(), "market order fills against the resting ask");
+    sim.record_fill(fill.fills.front());
+    check(sim.agent_metrics().fill_count == 1 && sim.agent_metrics().net_position == 5,
+          "getAgentMetrics reflects fills recorded against the handle");
+    check(!sim.trade_tape().empty(), "getTradeTape reflects book events");
+    check(sim.microstructure_metrics().midpoint_ticks > 0.0, "getMicrostructureMetrics is a thin wrapper, not new math");
+    sim.emit_signal({1, 2, 1, tape::SignalType::amplification_shock, 1.0, 1.0, "CULT-BEHAVIOR-1"});
+    check(sim.signal_tape().size() == 1, "getSignalTape reflects what the caller recorded");
+    const exchange::AccountState probe_account{100'000.0, 0, 100'000.0, 0.0, false};
+    const auto probe = sim.evaluate_risk(
+        {4, 4, exchange::Side::buy, exchange::OrderType::market, exchange::TimeInForce::immediate_or_cancel, 0, 10,
+         false, 2},
+        probe_account, SourceHealthState::healthy, 1);
+    check(probe == exchange::RiskDecision::accept, "getRiskState evaluates a hypothetical order without submitting it");
+  }
   exchange::LimitOrderBook book({1, 1, 1, 1, exchange::StpMode::cancel_newest});
   auto bid1 = book.submit({1, 1, exchange::Side::buy, exchange::OrderType::limit,
                            exchange::TimeInForce::good_til_cancel, 100, 10, false, 0},

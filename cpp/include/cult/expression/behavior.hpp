@@ -6,6 +6,7 @@
 #include <deque>
 #include <map>
 #include <set>
+#include <unordered_map>
 #include <vector>
 
 namespace cult::expression {
@@ -28,6 +29,26 @@ struct CascadeState {
   std::uint64_t size{};
   std::uint64_t depth{};
   std::uint64_t breadth{};
+  double attention{};
+  // Distinct record ids that at least one later event named as its
+  // parent -- i.e. posts within this cascade that have a child. Used to
+  // derive branching_factor in CascadeSummary without a second pass.
+  std::set<tape::CascadeId> internal_records;
+};
+// Point-in-time read-only view of a single cascade, returned by
+// BehaviorAccumulator::cascades(). lifetime_ns/branching_factor are derived
+// at snapshot time rather than stored, since they depend on "now"/completed
+// structure rather than being incrementally maintained.
+struct CascadeSummary {
+  tape::CascadeId id{};
+  tape::CascadeId root_id{};
+  std::uint64_t size{};
+  std::uint64_t depth{};
+  std::uint64_t breadth{};
+  tape::TimestampNs lifetime_ns{};
+  // (edges) / (posts with at least one child); 0.0 when not computable
+  // (fewer than 2 posts or no observed parent/child edges), never fabricated.
+  double branching_factor{};
   double attention{};
 };
 struct BehaviorState {
@@ -61,6 +82,7 @@ public:
   explicit BehaviorAccumulator(BehaviorConfig config = {});
   void apply(const tape::ExpressionEvent &event);
   [[nodiscard]] BehaviorState snapshot(ExpressionId expression_id, tape::TimestampNs now_ns) const;
+  [[nodiscard]] std::vector<CascadeSummary> cascades(ExpressionId expression_id) const;
   [[nodiscard]] ArrivalStatistics arrival_statistics(ExpressionId expression_id, tape::TimestampNs window_ns) const;
   [[nodiscard]] DataLiquidityTier liquidity_tier(ExpressionId expression_id) const;
 
@@ -74,6 +96,9 @@ private:
     std::set<tape::EventId> created_posts;
     std::set<tape::CascadeId> engaged_cascades;
     std::map<tape::CascadeId, CascadeState> cascades;
+    // record_id -> that record's own recursive depth, so a later event
+    // referencing it as a parent can compute depth(child) = depth(parent) + 1.
+    std::unordered_map<tape::CascadeId, std::uint64_t> depth_by_record;
     std::vector<tape::TimestampNs> creation_times;
   };
   BehaviorConfig config_;

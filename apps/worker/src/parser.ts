@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
 import { EmojiRegistry } from "@cult/expression-engine";
+import { AttributionStore } from "./attribution.js";
 import type {
   ContentBucket,
   ParsedBehaviorEvent,
@@ -32,11 +33,10 @@ export class EventDeduplicator {
   }
 }
 export class BlueskyEventParser {
-  private readonly postExpressions = new Map<string, string[]>();
-  private readonly cascadeRoots = new Map<string, string>();
   constructor(
     private readonly registry: EmojiRegistry,
     private readonly deduplicator = new EventDeduplicator(),
+    readonly attribution = new AttributionStore({}),
   ) {}
   parse(
     raw: string,
@@ -79,21 +79,21 @@ export class BlueskyEventParser {
       commit.operation === "delete" &&
       commit.collection === "app.bsky.feed.post"
     ) {
-      const expressionIds = this.postExpressions.get(recordUri) ?? [];
-      if (expressionIds.length)
+      const resolved = this.attribution.resolve(recordUri);
+      if (resolved.hit?.expressionIds.length)
         behaviorEvents.push({
           eventId: id,
           cursor: event.time_us,
           eventAtMs,
           receivedAtMs,
           actorId: event.did,
-          expressionIds,
+          expressionIds: resolved.hit.expressionIds,
           type: "DELETE",
-          cascadeUri: this.cascadeRoots.get(recordUri) ?? recordUri,
-          recordUri,
+          cascadeUri: resolved.hit.cascadeRootId,
+          recordUri: resolved.recordId,
+          arrivalMode: resolved.hit.origin === "RESTORED" ? "BACKFILLED" : "LIVE",
         });
-      this.postExpressions.delete(recordUri);
-      this.cascadeRoots.delete(recordUri);
+      this.attribution.forgetPost(recordUri);
       return { behaviorEvents, duplicate: false, malformed: false };
     }
     if (
@@ -102,23 +102,29 @@ export class BlueskyEventParser {
         commit.collection === "app.bsky.feed.repost") &&
       commit.record
     ) {
-      const subjectUri = strongRefUri(commit.record.subject),
-        expressionIds = subjectUri
-          ? (this.postExpressions.get(subjectUri) ?? [])
-          : [];
-      if (subjectUri && expressionIds.length)
-        behaviorEvents.push({
-          eventId: id,
-          cursor: event.time_us,
-          eventAtMs,
-          receivedAtMs,
-          actorId: event.did,
-          expressionIds,
-          type: commit.collection === "app.bsky.feed.like" ? "LIKE" : "REPOST",
-          cascadeUri: this.cascadeRoots.get(subjectUri) ?? subjectUri,
-          parentCascadeUri: subjectUri,
-          recordUri,
-        });
+      const subjectUri = strongRefUri(commit.record.subject);
+      if (subjectUri) {
+        this.attribution.eligibleEngagementEvents++;
+        const resolved = this.attribution.resolve(subjectUri);
+        if (resolved.hit?.expressionIds.length) {
+          this.attribution.mappedEngagementEvents++;
+          behaviorEvents.push({
+            eventId: id,
+            cursor: event.time_us,
+            eventAtMs,
+            receivedAtMs,
+            actorId: event.did,
+            expressionIds: resolved.hit.expressionIds,
+            type:
+              commit.collection === "app.bsky.feed.like" ? "LIKE" : "REPOST",
+            cascadeUri: resolved.hit.cascadeRootId,
+            parentCascadeUri: resolved.recordId,
+            recordUri: this.attribution.hash(recordUri),
+            arrivalMode:
+              resolved.hit.origin === "RESTORED" ? "BACKFILLED" : "LIVE",
+          });
+        }
+      }
       if (commit.collection === "app.bsky.feed.like")
         return { behaviorEvents, duplicate: false, malformed: false };
     }
@@ -176,8 +182,13 @@ export class BlueskyEventParser {
           : undefined,
       ),
       cascadeUri = replyRoot ?? recordUri;
-    this.postExpressions.set(recordUri, expressionIds);
-    this.cascadeRoots.set(recordUri, cascadeUri);
+    const recordId = this.attribution.recordPost(
+      recordUri,
+      expressionIds,
+      cascadeUri,
+      bucket as "ORIGINAL" | "REPLY" | "QUOTE",
+      eventAtMs,
+    );
     if (expressionIds.length)
       behaviorEvents.push({
         eventId: id,
@@ -187,28 +198,34 @@ export class BlueskyEventParser {
         actorId: event.did,
         expressionIds,
         type: "CREATE",
-        cascadeUri,
-        ...(replyParent ? { parentCascadeUri: replyParent } : {}),
-        recordUri,
+        cascadeUri: this.attribution.hash(cascadeUri),
+        ...(replyParent
+          ? { parentCascadeUri: this.attribution.hash(replyParent) }
+          : {}),
+        recordUri: recordId,
+        arrivalMode: "LIVE",
       });
     const engagementTarget = replyParent ?? quoteTarget;
     if (engagementTarget) {
-      const targetExpressions =
-        this.postExpressions.get(engagementTarget) ?? [];
-      if (targetExpressions.length)
+      this.attribution.eligibleEngagementEvents++;
+      const resolved = this.attribution.resolve(engagementTarget);
+      if (resolved.hit?.expressionIds.length) {
+        this.attribution.mappedEngagementEvents++;
         behaviorEvents.push({
           eventId: `${id}:engagement`,
           cursor: event.time_us,
           eventAtMs,
           receivedAtMs,
           actorId: event.did,
-          expressionIds: targetExpressions,
+          expressionIds: resolved.hit.expressionIds,
           type: replyParent ? "REPLY" : "QUOTE",
-          cascadeUri:
-            this.cascadeRoots.get(engagementTarget) ?? engagementTarget,
-          parentCascadeUri: engagementTarget,
-          recordUri,
+          cascadeUri: resolved.hit.cascadeRootId,
+          parentCascadeUri: resolved.recordId,
+          recordUri: recordId,
+          arrivalMode:
+            resolved.hit.origin === "RESTORED" ? "BACKFILLED" : "LIVE",
         });
+      }
     }
     return {
       document: {

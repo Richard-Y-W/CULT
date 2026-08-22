@@ -11,3 +11,5 @@ AM(t) = Σ EF_j exp(-ln(2) age_j / half_life)
 ```
 
 Default simulation weights `(1,3,4,2)` and 15-minute half-life are scenario parameters, not empirical truths. Every result carries `CULT-BEHAVIOR-1`. Multi-expression posts support full and fractional attribution; neither choice changes document-presence prevalence.
+
+Attribution itself — mapping a like/repost/reply/quote to the post it targets — is durable across worker restarts (see [live ingestion](../architecture/live-ingestion.md#post--expression-attribution)) and its coverage is an explicit, measured metric (`mappedEngagementRate`), never assumed complete.

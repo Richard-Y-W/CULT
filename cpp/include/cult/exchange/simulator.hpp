@@ -125,6 +125,7 @@ public:
 private:
   PreTradeLimits limits_;
 };
+[[nodiscard]] const char *risk_decision_name(RiskDecision decision) noexcept;
 class KillSwitch {
 public:
   void trigger(std::string reason) {
@@ -164,9 +165,25 @@ struct ScenarioReport {
   double reference{};
   double market_mid{};
   double basis_percent{};
+  // Outcome of the real pre-trade risk check the agent's order passed
+  // through before reaching CULT-X (see PreTradeRisk::check). `accept`
+  // unless the scenario's configured limits were deliberately tightened.
+  RiskDecision risk_decision{RiskDecision::accept};
   std::uint64_t output_hash{};
 };
-[[nodiscard]] ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool spam_like);
+// `risk_limits` default is sized for this venue's simulated desk (a signal
+// this size clears normal risk); pass a tighter PreTradeLimits to exercise
+// an actual rejection, as cpp/tests does. `reference_price` seeds the book
+// around the *actual* current price of the selected instrument -- the
+// 1000.0 default exists only so isolated unit/scenario fixtures (cpp/tests)
+// keep working unchanged; a product caller must pass the real current
+// market/reference price for the asset so this scenario's L2/microstructure
+// share the same price scale as the rest of the product (Casual, Analyst,
+// watchlists, risk) instead of floating in an unrelated ~1000-tick universe.
+[[nodiscard]] ScenarioReport run_great_cry_shock(std::uint64_t seed, bool concentrated, bool spam_like,
+                                                 PreTradeLimits risk_limits = {10000, 50000, 5'000'000.0, 3.0, 100,
+                                                                               10000},
+                                                 double reference_price = 1000.0);
 struct LatencyOutcome {
   tape::TimestampNs cancel_latency_ns{};
   bool stale_quote_filled{};
