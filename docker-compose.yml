@@ -18,7 +18,13 @@ services:
     build:
       context: .
       dockerfile: docker/Dockerfile.worker
-    command: ["npm", "run", "db:migrate"]
+    # db:seed populates the `expressions` reference table that
+    # expression_observations_v3.expression_id has a foreign-key constraint
+    # against. Migrations alone leave it empty -- every worker write failed
+    # with a foreign-key violation until seeding ran, discovered running
+    # this profile's first real live-shadow session. Both scripts are
+    # idempotent (ON CONFLICT upserts), safe to rerun.
+    command: ["sh", "-c", "npm run db:migrate && npm run db:seed"]
     environment:
       DATABASE_URL: postgresql://cult:cult@postgres:5432/cult
     depends_on:

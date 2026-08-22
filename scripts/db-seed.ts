@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import pg from "pg";
 import { randomUUID } from "node:crypto";
 import { ASSETS } from "@cult/shared";
@@ -9,6 +11,36 @@ const db = new pg.Client({
 await db.connect();
 try {
   await db.query("BEGIN");
+  // The live worker aggregates every expression in the pinned Unicode
+  // registry (30 emoji), not just the ones @cult/shared lists as tradeable
+  // ASSETS (19, a strict subset -- some registry emoji have no market
+  // listing yet). expression_observations_v3.expression_id has a foreign
+  // key against this table, so seeding only ASSETS left every window's
+  // insert for a non-listed registry emoji failing with a foreign-key
+  // violation -- found running this project's first real live-shadow
+  // session. Seed the full registry first (ON CONFLICT DO NOTHING so it
+  // never overrides richer product data), then let the ASSETS loop below
+  // upsert the tradeable subset's ticker/description/etc as before.
+  const registry = JSON.parse(
+    await readFile(
+      resolve("data/reference/unicode/cult-emoji-registry-v1.json"),
+      "utf8",
+    ),
+  ) as {
+    assets: {
+      id: string;
+      ticker: string;
+      canonical: string;
+      codepoints: string;
+      display_name: string;
+      unicode_name: string;
+    }[];
+  };
+  for (const r of registry.assets)
+    await db.query(
+      "INSERT INTO expressions(id,ticker,canonical_expression,asset_type,unicode,display_name,description) VALUES($1,$2,$3,'EMOJI',$4,$5,$6) ON CONFLICT(id) DO NOTHING",
+      [r.id, r.ticker, r.canonical, r.codepoints, r.display_name, r.unicode_name],
+    );
   for (const a of ASSETS)
     await db.query(
       "INSERT INTO expressions(id,ticker,canonical_expression,asset_type,unicode,display_name,description) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT(id) DO UPDATE SET display_name=excluded.display_name",

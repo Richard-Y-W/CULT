@@ -24,6 +24,22 @@ read that document for the evidence behind every check below.
       clear diagnostic (documented, unfixed gap -- see the main audit,
       §68-69). Run migrations explicitly and confirm they succeeded before
       starting the worker.
+- [ ] **The database is seeded** (`npm run db:seed`) **before the worker
+      starts writing.** `expression_observations_v3.expression_id` has a
+      foreign-key constraint against the `expressions` table, which
+      migrations create empty -- `db:seed` is what actually populates it
+      from `packages/shared`'s asset list. Found the hard way running this
+      audit's own first real live-shadow session: every window write failed
+      with `violates foreign key constraint
+      "expression_observations_v3_expression_id_fkey"` until seeding ran.
+      The worker does **not** treat this as fatal -- per this audit's own
+      `CompositeSink` fix, the failure is logged per-sink and the local
+      `ReplaySink` JSONL still durably captured every window in the
+      meantime, so no data was lost, but PostgreSQL received nothing until
+      seeded. `db:seed` is idempotent (`ON CONFLICT` upserts) and safe to
+      run at any time, including against a database the worker is already
+      writing to -- the next window flush after seeding will succeed
+      without a worker restart.
 - [ ] `CULT_DATA_MODE=live-shadow` is set (not `live-market` -- that
       requires a separate, deliberate acknowledgement and a 72-hour
       validated-hours floor; see ADR-018).
